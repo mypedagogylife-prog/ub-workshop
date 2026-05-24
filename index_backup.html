@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upward Bound — Virtual Week 1</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple: #5B50C8;
+  --purple-light: #EEEDFE;
+  --purple-dark: #3C3489;
+  --teal: #1D9E75;
+  --teal-light: #E1F5EE;
+  --amber: #BA7517;
+  --amber-light: #FAEEDA;
+  --coral: #D85A30;
+  --gray-100: #F7F6F3;
+  --gray-200: #EDEBE5;
+  --gray-400: #9B9890;
+  --gray-700: #3A3935;
+  --success: #1D9E75;
+  --success-light: #E1F5EE;
+  --danger: #D85A30;
+  --danger-light: #FAECE7;
+  --warning-light: #FAEEDA;
+  --warning: #BA7517;
+  --white: #FFFFFF;
+  --text: #1A1917;
+  --text-muted: #6B6965;
+  --border: rgba(0,0,0,0.08);
+  --border-med: rgba(0,0,0,0.14);
+  --radius: 10px;
+  --radius-lg: 16px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--gray-100);color:var(--text);min-height:100vh;line-height:1.6}
+
+.shell{max-width:740px;margin:0 auto;padding:24px 16px 60px}
+
+.topbar{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.logo{font-family:'Playfair Display',serif;font-size:17px;color:var(--purple-dark);letter-spacing:-0.01em}
+.logo span{color:var(--gray-400);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:400;margin-left:8px}
+
+.day-tabs{display:flex;gap:4px}
+.dtab{padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border-med);background:transparent;color:var(--text-muted);transition:all .15s}
+.dtab:hover{background:var(--gray-100)}
+.dtab.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+.dtab.done{background:var(--success-light);color:var(--success);border-color:var(--success)}
+.dtab.done::after{content:' ✓'}
+
+.greeting{font-size:13px;color:var(--text-muted);font-weight:500}
+
+.pbar-wrap{background:var(--gray-200);border-radius:4px;height:5px;margin-bottom:20px;overflow:hidden}
+.pbar-fill{height:100%;background:var(--purple);border-radius:4px;transition:width .5s ease}
+
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
+.step-num{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0}
+.sn-active{background:var(--purple-light);color:var(--purple-dark)}
+.sn-done{background:var(--success-light);color:var(--success)}
+.sn-wait{background:var(--gray-200);color:var(--gray-400)}
+.card-title{font-size:16px;font-weight:600;color:var(--text)}
+.card-sub{font-size:13px;color:var(--text-muted);margin-top:2px}
+.timer-badge{margin-left:auto;font-size:12px;font-weight:500;color:var(--purple);background:var(--purple-light);padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+
+.prompt{background:var(--gray-100);border-radius:var(--radius);padding:14px 16px;font-size:14px;color:var(--text-muted);line-height:1.65;margin-bottom:16px}
+.prompt strong{color:var(--text);font-weight:600}
+
+textarea{width:100%;min-height:100px;padding:12px 14px;font-size:14px;border:1px solid var(--border-med);border-radius:var(--radius);background:var(--white);color:var(--text);resize:vertical;font-family:'DM Sans',sans-serif;line-height:1.6;transition:border .15s}
+textarea:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(91,80,200,0.1)}
+.name-inp{padding:10px 14px;font-size:15px;font-weight:500;border:1px solid var(--border-med);border-radius:var(--radius);background:var(--white);color:var(--text);width:100%;max-width:300px;font-family:'DM Sans',sans-serif;transition:border .15s}
+.name-inp:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(91,80,200,0.1)}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;border:1px solid var(--border-med);background:transparent;color:var(--text);transition:all .15s;font-family:'DM Sans',sans-serif}
+.btn:hover{background:var(--gray-100)}
+.btn:active{transform:scale(0.98)}
+.btn-primary{background:var(--purple);color:#fff;border-color:var(--purple)}
+.btn-primary:hover{background:var(--purple-dark);border-color:var(--purple-dark)}
+.btn-success{background:var(--success);color:#fff;border-color:var(--success)}
+
+.row{display:flex;gap:8px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+
+.ai-box{background:var(--purple-light);border-radius:var(--radius-lg);padding:16px 18px;margin-top:16px}
+.ai-label{font-size:11px;font-weight:600;color:var(--purple-dark);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.ai-text{font-size:14px;color:var(--purple-dark);line-height:1.7}
+.dots{display:flex;gap:5px;padding:4px 0}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--purple);opacity:.3;animation:pulse 1.2s infinite}
+.dot:nth-child(2){animation-delay:.2s}
+.dot:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+
+.choices{display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.choice{padding:11px 14px;border-radius:var(--radius);font-size:14px;text-align:left;cursor:pointer;border:1px solid var(--border-med);background:var(--white);color:var(--text);transition:all .15s;font-family:'DM Sans',sans-serif;line-height:1.4}
+.choice:hover:not(:disabled){border-color:var(--purple);background:var(--purple-light)}
+.choice.correct{background:var(--success-light);border-color:var(--success);color:var(--success)}
+.choice.wrong{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
+.explain-box{background:var(--gray-100);border-left:3px solid var(--purple);border-radius:0 var(--radius) var(--radius) 0;padding:12px 14px;margin-top:8px;font-size:13px;color:var(--text-muted);line-height:1.65}
+
+.budget-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.b-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--gray-100);border-radius:8px;font-size:13px;color:var(--text)}
+.b-row input{width:80px;text-align:right;padding:4px 8px;font-size:13px;border:1px solid var(--border-med);border-radius:6px;background:var(--white);color:var(--text);font-family:'DM Sans',sans-serif}
+.b-row input:focus{outline:none;border-color:var(--purple)}
+.b-total{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;margin-top:6px;transition:background .2s,color .2s}
+
+.vote-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0}
+.vbtn{padding:10px 12px;border-radius:var(--radius);font-size:13px;text-align:left;cursor:pointer;border:1px solid var(--border-med);background:var(--white);color:var(--text);transition:all .15s;line-height:1.4;font-family:'DM Sans',sans-serif}
+.vbtn:hover{border-color:var(--purple);background:var(--purple-light)}
+.vbtn.voted{background:var(--purple-light);border-color:var(--purple);color:var(--purple-dark);font-weight:500}
+
+.q-label{font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px}
+.q-text{font-size:14px;font-weight:500;color:var(--text);margin-bottom:8px;line-height:1.5}
+.passage{background:var(--gray-100);border-radius:var(--radius);padding:12px 14px;font-size:13px;line-height:1.7;color:var(--text-muted);margin-bottom:12px;font-style:italic}
+
+.complete{background:linear-gradient(135deg,var(--success-light),#D0F0E4);border:1px solid var(--success);border-radius:var(--radius-lg);padding:28px;text-align:center;margin-top:16px}
+.complete-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--success);margin-bottom:6px}
+.complete-sub{font-size:14px;color:var(--success);opacity:.85}
+
+.declaration-big{font-family:'Playfair Display',serif;font-size:20px;color:var(--purple-dark);margin:16px 0 10px;line-height:1.3}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<div class="topbar">
+  <div class="logo">Upward Bound <span>Virtual Week 1</span></div>
+  <div class="day-tabs">
+    <button class="dtab active" onclick="switchDay(1)" id="tab1">Day 1</button>
+    <button class="dtab" onclick="switchDay(2)" id="tab2">Day 2</button>
+    <button class="dtab" onclick="switchDay(3)" id="tab3">Day 3</button>
+  </div>
+  <div class="greeting" id="greet">Welcome!</div>
+</div>
+
+<div class="pbar-wrap"><div class="pbar-fill" id="pbar" style="width:0%"></div></div>
+
+<div id="content"></div>
+
+</div>
+
+<script>
+const S = {
+  name:'', day:1,
+  steps:{1:{cur:0,done:[]},2:{cur:0,done:[]},3:{cur:0,done:[]}},
+  resp:{}, votes:{}
+};
+
+const DAYS = {
+  1:['welcome','poem','events','pitch','preview'],
+  2:['d2welcome','truths','act-eng','act-math','goals','vision'],
+  3:['d3welcome','budget','alumni','dilemma','declare']
+};
+
+async function ai(system, user) {
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,system,messages:[{role:'user',content:user}]})
+    });
+    const d = await r.json();
+    return d.content?.[0]?.text || 'Try again in a moment.';
+  } catch(e){ return 'Could not reach the AI coach. Please check your connection and try again.'; }
+}
+
+function loading(id){
+  document.getElementById(id).innerHTML = `<div class="ai-box"><div class="ai-label">&#x1F916; AI Coach</div><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
+}
+function showAI(id,txt){
+  document.getElementById(id).innerHTML = `<div class="ai-box"><div class="ai-label">&#x1F916; AI Coach</div><div class="ai-text">${txt.replace(/\n/g,'<br>')}</div></div>`;
+}
+function show(id){ document.getElementById(id).style.display='block'; }
+
+function pct(){
+  const steps = DAYS[S.day];
+  const p = Math.round((S.steps[S.day].done.length / steps.length)*100);
+  document.getElementById('pbar').style.width = p+'%';
+}
+
+function switchDay(d){
+  S.day = d;
+  [1,2,3].forEach(i=>{
+    const all = DAYS[i].length, done = S.steps[i].done.length;
+    document.getElementById('tab'+i).className = 'dtab' + (i===d?' active':'') + (done===all&&all>0?' done':'');
+  });
+  pct(); render();
+}
+
+function advance(){
+  const steps = DAYS[S.day];
+  const s = S.steps[S.day];
+  if(!s.done.includes(steps[s.cur])) s.done.push(steps[s.cur]);
+  if(s.cur < steps.length-1) s.cur++;
+  pct(); render();
+}
+
+function markDone(day){
+  const steps = DAYS[day];
+  const s = S.steps[day];
+  const cur = steps[s.cur];
+  if(!s.done.includes(cur)) s.done.push(cur);
+  pct();
+  document.getElementById('tab'+day).className = 'dtab' + (S.day===day?' active':'') + (s.done.length===steps.length?' done':'');
+}
+
+function render(){
+  if(S.day===1) rDay1();
+  if(S.day===2) rDay2();
+  if(S.day===3) rDay3();
+}
+
+// ── DAY 1 ─────────────────────────────────────────────────────
+function rDay1(){
+  const c = S.steps[1].cur;
+  let h = '';
+  if(c===0){
+    h = `<div class="card">
+      <div class="card-header"><div class="step-num sn-active">1</div><div><div class="card-title">Welcome to Upward Bound</div><div class="card-sub">Day 1 — Who Are You?</div></div></div>
+      <div class="prompt"><strong>First things first.</strong> What's your name? The AI coach will use it throughout all three days.</div>
+      <input class="name-inp" id="nf" placeholder="Your first name..." value="${S.name}">
+      <div class="row"><button class="btn btn-primary" onclick="saveName()">Let's go &#x2192;</button></div>
+    </div>`;
+  } else if(c===1){
+    h = `<div class="card">
+      <div class="card-header"><div class="step-num sn-active">2</div><div><div class="card-title">The "I Am From" poem</div><div class="card-sub">Identity + voice · Public speaking practice</div></div><div class="timer-badge">&#x23F1; 8 min</div></div>
+      <div class="prompt"><strong>Your turn, ${S.name}.</strong> Complete each line with something real and specific from your life. Don't overthink it — the goal is honesty, not perfection.<br><br>Be specific: not "a small town" but "the sound of the screen door slamming every morning."</div>
+      <div style="background:var(--purple-light);border-radius:var(--radius);padding:12px 16px;margin-bottom:10px;font-size:13px;line-height:2;color:var(--purple-dark)">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--purple);margin-bottom:6px">Complete each line in the box below — keep this open as a reference</div>
+        <div>1. I am from... <span style="color:var(--text-muted)">(a place, a smell, a sound)</span></div>
+        <div>2. I am from... <span style="color:var(--text-muted)">(a food or routine from childhood)</span></div>
+        <div>3. I am from... <span style="color:var(--text-muted)">(something your family says or believes)</span></div>
+        <div>4. I am from... <span style="color:var(--text-muted)">(a person who shaped you)</span></div>
+        <div>5. I am from... <span style="color:var(--text-muted)">(something you were told you couldn't do)</span></div>
+        <div>6. I am from... <span style="color:var(--text-muted)">(something you're proud of)</span></div>
+        <div>7. I am from... <span style="color:var(--text-muted)">(where you're going — a dream or goal)</span></div>
+      </div>
+      <textarea id="poem" placeholder="Write your poem here — one line at a time...">${S.resp.poem||''}</textarea>
+      <div class="row"><button class="btn btn-primary" onclick="subPoem()">Submit for feedback &#x2192;</button></div>
+      <div id="poem-fb"></div>
+      <div id="poem-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">Next activity &#x2192;</button></div></div>
+    </div>`;
+  } else if(c===2){
+    h = `<div class="card">
+      <div class="card-header"><div class="step-num sn-active">3</div><div><div class="card-title">Current events — your take</div><div class="card-sub">Critical thinking · 10 minutes</div></div><div class="timer-badge">&#x23F1; 10 min</div></div>
+      <div class="prompt"><strong>Read this headline:</strong><br><br>"Scientists confirm the ocean absorbed record levels of heat last year — raising urgent concerns about sea level rise, stronger hurricanes, and coral reef extinction within a generation."<br><br>Answer all three questions below.</div>
+      <textarea id="ce" placeholder="1. What happened? (in your own words)
+2. Why does this matter to someone your age specifically?
+3. If you were in charge — what would you do?" style="min-height:120px">${S.resp.events||''}</textarea>
+      <div class="row"><button class="btn btn-primary" onclick="subCE()">Get AI feedback &#x2192;</button></div>
+      <div id="ce-fb"></div>
+      <div id="ce-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">Next activity &#x2192;</button></div></div>
+    </div>`;
+  } else if(c===3){
+    h = `<div class="card">
+      <div class="card-header"><div class="step-num sn-active">4</div><div><div class="card-title">Your 60-second pitch</div><div class="card-sub">Public speaking · community problem solving</div></div><div class="timer-badge">&#x23F1; 15 min</div></div>
+      <div class="prompt"><strong>The question:</strong> What is one problem in your community you would fix if you had the power?<br><br>Write your answer as a 60-second spoken response — about 120–150 words. Open with a strong hook. Be specific about the problem. Propose a real solution. Close with impact.</div>
+      <textarea id="pitch" placeholder="Open strong — grab attention immediately.
+Describe the problem specifically.
+Propose your solution clearly.
+Close with a call to action or powerful statement." style="min-height:130px">${S.resp.pitch||''}</textarea>
+      <div class="row"><button class="btn btn-primary" onclick="subPitch()">Get coaching feedback &#x2192;</button></div>
+      <div id="pitch-fb"></div>
+      <div id="pitch-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">Next activity &#x2192;</button></div></div>
+    </div>`;
+  } else if(c===4){
+    h = `<div class="card">
+      <div class="card-header"><div class="step-num sn-active">5</div><div><div class="card-title">Your summer preview</div><div class="card-sub">What's coming in person</div></div></div>
+      <div class="prompt"><strong>${S.name}, here is what you're about to experience:</strong><br><br>
+      English &nbsp;·&nbsp; Upper Level Math &nbsp;·&nbsp; Human Anatomy &nbsp;·&nbsp; Chemistry &nbsp;·&nbsp; Film Making &nbsp;·&nbsp; <strong>Drones</strong> &nbsp;·&nbsp; Fitness &nbsp;·&nbsp; Martial Arts<br><br>
+      Which course excites you most — and why? Which one makes you most nervous?</div>
+      <textarea id="prev" placeholder="I'm most excited about... because...
+The one that makes me nervous is... because..." style="min-height:80px">${S.resp.preview||''}</textarea>
+      <div class="row"><button class="btn btn-success" onclick="subPreview()">Complete Day 1 &#x2713;</button></div>
+      <div id="prev-fb"></div>
+    </div>`;
+  }
+  document.getElementById('content').innerHTML = h;
+}
+
+async function saveName(){
+  const n = document.getElementById('nf').value.trim();
+  if(!n){alert('Please enter your name!');return;}
+  S.name = n;
+  document.getElementById('greet').textContent = 'Hi, '+n+'!';
+  advance();
+}
+async function subPoem(){
+  const v = document.getElementById('poem').value.trim();
+  if(v.length<40){alert('Please complete at least a few lines before submitting.');return;}
+  S.resp.poem = v; loading('poem-fb');
+  const r = await ai(
+    `You are a warm, affirming Upward Bound workshop coach responding to a high school student's "I Am From" poem. Be encouraging and specific. 1) Name 2 vivid details you loved from their actual poem (quote short phrases). 2) Give one gentle tip to make one line even more specific. Keep it conversational, under 110 words. Sign off with a brief hype line about their voice.`,
+    `Student: ${S.name}\nPoem:\n${v}`
+  );
+  showAI('poem-fb',r); show('poem-nx');
+}
+async function subCE(){
+  const v = document.getElementById('ce').value.trim();
+  if(v.length<30){alert('Please write more before submitting.');return;}
+  S.resp.events = v; loading('ce-fb');
+  const r = await ai(
+    `You are a Upward Bound coach. The student analyzed a current events headline about record ocean heat. Affirm what was strong in their analysis. Then ask ONE sharp follow-up question to push their thinking deeper — something that connects this to their own future. Under 90 words.`,
+    `Student: ${S.name}\nResponse:\n${v}`
+  );
+  showAI('ce-fb',r); show('ce-nx');
+}
+async function subPitch(){
+  const v = document.getElementById('pitch').value.trim();
+  if(v.length<50){alert('Please write more before submitting.');return;}
+  S.resp.pitch = v; loading('pitch-fb');
+  const r = await ai(
+    `You are a public speaking coach for Upward Bound high school students. Give: 1) GLOW — one specific thing that worked (quote their exact words). 2) GROW — one concrete technique to improve it (stronger opening, tighter close, more specific detail, etc). Be direct and encouraging. Under 120 words.`,
+    `Student: ${S.name}\nPitch:\n${v}`
+  );
+  showAI('pitch-fb',r); show('pitch-nx');
+}
+async function subPreview(){
+  const v = document.getElementById('prev').value.trim();
+  if(v.length<20){alert('Please write your answer before finishing.');return;}
+  S.resp.preview = v; loading('prev-fb');
+  const r = await ai(
+    `You are an enthusiastic Upward Bound coach. The student shared which course excites them and which makes them nervous. Validate both feelings and connect their excitement or nervousness to the growth mindset — nervous = your brain knowing it's about to grow. End with a punchy, personal hype line. Under 90 words.`,
+    `Student: ${S.name}\nResponse:\n${v}`
+  );
+  showAI('prev-fb',r);
+  markDone(1);
+  document.getElementById('content').innerHTML += `<div class="complete"><div class="complete-title">Day 1 complete, ${S.name}!</div><div class="complete-sub">You showed up. You wrote. You spoke. Switch to Day 2 above whenever you're ready.</div></div>`;
+}
+
+// ── DAY 2 ─────────────────────────────────────────────────────
+const ACT = {
+  eng:[
+    {q:'Which best replaces the underlined sentence?',
+     pass:'"Marcus had always been interested in science and volunteered at a hospital. [The experience changed his perspective greatly.] Working alongside nurses and doctors, he realized that medicine required not only knowledge but also compassion."',
+     opts:['A. The experience, which was very impactful, changed his perspective in a great way.','B. His perspective was greatly changed by the experience he had there.','C. Working there shifted how Marcus thought about his future career.','D. The experience changed his perspective, and it was a big change for him.'],
+     ans:'C',explain:'C is correct — it\'s the most concise and tells us HOW his perspective changed (toward his future). A and D are wordy/redundant. B uses awkward passive voice. Strategy: eliminate wordy, vague, or redundant choices.'},
+    {q:'Where would this sentence best fit? "Some researchers believe older trees use these networks to support younger seedlings."',
+     pass:'"(1) Scientists discovered trees communicate through underground fungal networks. (2) These networks allow trees to share nutrients and send warning signals when under attack."',
+     opts:['A. Before sentence 1 as an introduction','B. After sentence 1 to give context','C. After sentence 2 — it gives a specific example of network use','D. It should NOT be added — it contradicts the main idea'],
+     ans:'C',explain:'C is correct. The new sentence gives a specific example of how the network is used — supporting seedlings. It follows sentence 2 logically. Always check what comes before AND after the insertion point.'},
+    {q:'Which choice best concludes a paragraph about community involvement in a park renovation?',
+     pass:'"The city council approved a renovation plan including new trails, a community garden, and an amphitheater. Many residents submitted feedback during the public comment period, and their ideas were incorporated."',
+     opts:['A. The amphitheater will seat up to 500 people and cost $200,000.','B. Council members said the park would open by next spring.','C. The final design is a direct reflection of what residents said they wanted.','D. Future phases of renovation are still being discussed.'],
+     ans:'C',explain:'C is correct. The paragraph\'s main idea is community involvement. A strong conclusion reinforces that theme. A adds unrelated cost data. B shifts to timeline. D introduces a new idea. Identify the paragraph\'s main idea before reading the choices.'}
+  ],
+  math:[
+    {q:'A store sells small drinks ($3.50) and large drinks ($5.00). They sold 80 drinks and collected $340. How many small drinks were sold?',
+     pass:null,
+     opts:['A. 20','B. 40','C. 60','D. 72'],
+     ans:'B',explain:'B is correct (40). Set up: s + L = 80 and 3.5s + 5L = 340. Substitute L = 80−s: 3.5s + 5(80−s) = 340 → −1.5s = −60 → s = 40. Always name variables and write both equations before solving.'},
+    {q:'If f(x) = 3x² − 2x + 1, what is f(−2)?',
+     pass:null,
+     opts:['A. −7','B. 9','C. 17','D. 21'],
+     ans:'C',explain:'C is correct (17). f(−2) = 3(−2)² − 2(−2) + 1 = 3(4) + 4 + 1 = 17. Most common mistake: computing (−2)² as −4. Always put negatives in parentheses when substituting.'},
+    {q:'A rectangle has perimeter 56 ft. Its length is 4 more than twice its width. What is its area in sq ft?',
+     pass:null,
+     opts:['A. 96','B. 128','C. 160','D. 200'],
+     ans:'C',explain:'C is correct (160). Perimeter: L + W = 28. Length = 2W + 4. So (2W+4) + W = 28 → W = 8, L = 20. Area = 8 × 20 = 160. Always plug your answer back in to verify.'}
+  ]
+};
+let actState = {eng:{q:0,done:false},math:{q:0,done:false}};
+
+function rDay2(){
+  const c = S.steps[2].cur;
+  let h = '';
+  if(c===0){
+    h=`<div class="card">
+      <div class="card-header"><div class="step-num sn-active">1</div><div><div class="card-title">Welcome to Day 2</div><div class="card-sub">How do you succeed?</div></div></div>
+      <div class="prompt">Today: Two Truths + One Goal · ACT English Strategy · ACT Math Strategy · SMART Goals · College Vision.<br><br>Each activity builds on the last. Let's go.</div>
+      <div class="row"><button class="btn btn-primary" onclick="advance()">Start Day 2 &#x2192;</button></div>
+    </div>`;
+  } else if(c===1){
+    h=`<div class="card">
+      <div class="card-header"><div class="step-num sn-active">2</div><div><div class="card-title">Two truths, one goal</div><div class="card-sub">Community + intention</div></div></div>
+      <div class="prompt">Share two true things about yourself and one real, specific goal for this summer. "Do better in school" is not a SMART goal. "Raise my ACT score from 19 to 23 by August" is.</div>
+      <textarea id="truths" placeholder="Truth 1: ...
+Truth 2: ...
+My goal for this summer: ..." style="min-height:90px">${S.resp.truths||''}</textarea>
+      <div class="row"><button class="btn btn-primary" onclick="subTruths()">Submit &#x2192;</button></div>
+      <div id="truths-fb"></div>
+      <div id="truths-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">Next &#x2192;</button></div></div>
+    </div>`;
+  } else if(c===2){
+    actState.eng = {q:0,done:false};
+    h=`<div class="card">
+      <div class="card-header"><div class="step-num sn-active">3</div><div><div class="card-title">ACT strategy — English</div><div class="card-sub">3 questions · Process of elimination</div></div><div class="timer-badge">&#x23F1; 15 min</div></div>
+      <div class="prompt"><strong>Key insight:</strong> The ACT tests strategic thinking, not IQ. One answer is always right because it's the most concise and fully supported by the text. Let's practice on real question types.</div>
+      <div id="act-eng-container"></div>
+      <div id="eng-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">On to Math &#x2192;</button></div></div>
+    </div>`;
+    setTimeout(()=>renderACTQ('eng',0),50);
+  } else if(c===3){
+    actState.math = {q:0,done:false};
+    h=`<div class="card">
+      <div class="card-header"><div class="step-num sn-active">4</div><div><div class="card-title">ACT strategy — Math</div><div class="card-sub">3 questions · Show your work</div></div><div class="timer-badge">&#x23F1; 15 min</div></div>
+      <div class="prompt"><strong>Strategy:</strong> Write every step. Draw it if needed. Never solve in your head. Plug answers back in to check. One wrong sign can cost you the question.</div>
+      <div id="act-math-container"></div>
+      <div id="math-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">Next: SMART Goals &#x2192;</button></div></div>
+    </div>`;
+    setTimeout(()=>renderACTQ('math',0),50);
+  } else if(c===4){
+    h=`<div class="card">
+      <div class="card-header"><div class="step-num sn-active">5</div><div><div class="card-title">My SMART goals</div><div class="card-sub">Specific · Measurable · Achievable · Relevant · Time-bound</div></div><div class="timer-badge">&#x23F1; 10 min</div></div>
+      <div class="prompt">Write one academic goal and one personal goal. Make them SMART — not "I want to do better" but "I will raise my ACT score by 3 points by August by practicing 20 min/day."</div>
+      <textarea id="goals" placeholder="Academic goal: I will...
+By [date] because...
+I'll know I achieved it when...
+
+Personal goal: I will...
+By [date] because...
+I'll know I achieved it when..." style="min-height:150px">${S.resp.goals||''}</textarea>
+      <div class="row"><button class="btn btn-primary" onclick="subGoals()">Get feedback &#x2192;</button></div>
+      <div id="goals-fb"></div>
+      <div id="goals-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">Final activity &#x2192;</button></div></div>
+    </div>`;
+  } else if(c===5){
+    h=`<div class="card">
+      <div class="card-header"><div class="step-num sn-active">6</div><div><div class="card-title">My college vision</div><div class="card-sub">Where are you going?</div></div></div>
+      <div class="prompt">Describe your college or career vision. Where do you see yourself at 25? What do you want to have built, done, or become? Be specific and be bold — this is your life to design.</div>
+      <textarea id="vision" placeholder="At 25 I want to...
+The school or career I'm aiming for is...
+One person I look up to who did something like this is...
+The first step I can take THIS summer is..." style="min-height:130px">${S.resp.vision||''}</textarea>
+      <div class="row"><button class="btn btn-success" onclick="subVision()">Complete Day 2 &#x2713;</button></div>
+      <div id="vision-fb"></div>
+    </div>`;
+  }
+  document.getElementById('content').innerHTML = h;
+}
+
+function renderACTQ(section, qIdx){
+  const qs = ACT[section];
+  const q = qs[qIdx];
+  const container = document.getElementById(`act-${section}-container`);
+  if(!container) return;
+  let html = `<div id="act-${section}-q${qIdx}">`;
+  html += `<div class="q-label">Q${qIdx+1} of ${qs.length}</div>`;
+  if(q.pass) html += `<div class="passage">${q.pass}</div>`;
+  html += `<div class="q-text">${q.q}</div>`;
+  html += `<div class="choices" id="choices-${section}-${qIdx}">`;
+  q.opts.forEach((opt,i)=>{
+    const letter = 'ABCD'[i];
+    html += `<button class="choice" onclick="answerACT('${section}',${qIdx},'${letter}')">${opt}</button>`;
+  });
+  html += `</div><div id="explain-${section}-${qIdx}"></div></div>`;
+  container.innerHTML = (container.innerHTML || '') + html;
+}
+
+function answerACT(section, qIdx, chosen){
+  const q = ACT[section][qIdx];
+  const correct = q.ans;
+  const isRight = chosen === correct;
+  const btns = document.querySelectorAll(`#choices-${section}-${qIdx} .choice`);
+  btns.forEach(btn=>{
+    btn.disabled = true;
+    const letter = btn.textContent.trim()[0];
+    if(letter === correct) btn.className = 'choice correct';
+    else if(letter === chosen && !isRight) btn.className = 'choice wrong';
+  });
+  document.getElementById(`explain-${section}-${qIdx}`).innerHTML =
+    `<div class="explain-box"><strong>${isRight?'Correct!':'Not quite —'}</strong> ${q.explain}</div>`;
+  const qs = ACT[section];
+  setTimeout(()=>{
+    if(qIdx+1 < qs.length){
+      renderACTQ(section, qIdx+1);
+    } else {
+      show(`${section==='eng'?'eng':'math'}-nx`);
+    }
+  }, 600);
+}
+
+async function subTruths(){
+  const v=document.getElementById('truths').value.trim();
+  if(v.length<20){alert('Please add more detail.');return;}
+  S.resp.truths=v; loading('truths-fb');
+  const r=await ai(`You are a warm Upward Bound coach. The student shared two truths and a summer goal. Reflect their goal back and sharpen it — does it have a measurable number and a deadline? If not, suggest what to add. Keep it encouraging and under 100 words.`,`Student: ${S.name}\n${v}`);
+  showAI('truths-fb',r); show('truths-nx');
+}
+async function subGoals(){
+  const v=document.getElementById('goals').value.trim();
+  if(v.length<50){alert('Please write more detail in your goals.');return;}
+  S.resp.goals=v; loading('goals-fb');
+  const r=await ai(`You are a SMART goals coach for Upward Bound students. Evaluate both goals. Identify which SMART element is weakest (usually Measurable or Time-bound) and give a specific revision suggestion. Be encouraging. Under 130 words.`,`Student: ${S.name}\nGoals:\n${v}`);
+  showAI('goals-fb',r); show('goals-nx');
+}
+async function subVision(){
+  const v=document.getElementById('vision').value.trim();
+  if(v.length<30){alert('Please write more.');return;}
+  S.resp.vision=v; loading('vision-fb');
+  const r=await ai(`You are an inspiring Upward Bound coach. The student described their college/career vision. Reflect their specific vision back energetically. Connect it to one concrete action they can take THIS summer. End with a powerful hype line. Under 100 words.`,`Student: ${S.name}\nVision:\n${v}`);
+  showAI('vision-fb',r);
+  markDone(2);
+  document.getElementById('content').innerHTML += `<div class="complete"><div class="complete-title">Day 2 complete, ${S.name}!</div><div class="complete-sub">ACT strategy. SMART goals. A vision for your future. Switch to Day 3 above.</div></div>`;
+}
+
+// ── DAY 3 ─────────────────────────────────────────────────────
+function rDay3(){
+  const c = S.steps[3].cur;
+  let h = '';
+  if(c===0){
+    h=`<div class="card">
+      <div class="card-header"><div class="step-num sn-active">1</div><div><div class="card-title">Welcome to Day 3</div><div class="card-sub">How do you navigate the world?</div></div></div>
+      <div class="prompt">Today: Budget Simulation · Alumni Wisdom · Decision Dilemmas · Your Summer Declaration.<br><br>This is the most practical day of the week. Real money, real decisions, real life.</div>
+      <div class="row"><button class="btn btn-primary" onclick="advance()">Start Day 3 &#x2192;</button></div>
+    </div>`;
+  } else if(c===1){
+    h=`<div class="card">
+      <div class="card-header"><div class="step-num sn-active">2</div><div><div class="card-title">Budget simulation — Reality Check</div><div class="card-sub">Scenario: Medical Office Receptionist, Orlando FL</div></div><div class="timer-badge">&#x23F1; 15 min</div></div>
+      <div class="prompt"><strong>Your situation:</strong> You just graduated. You work as a medical office receptionist in Orlando, Florida. Take-home pay: <strong>$2,400/month</strong>. Average 1-BR rent: <strong>$1,300/month</strong>. This month, a dental emergency hit — a crown your insurance covers 50%. Your out-of-pocket bill: <strong>$600</strong>.<br><br>Fill in your monthly budget below. Don't go over $2,400.</div>
+      <div class="budget-grid">
+        <div class="b-row"><span>Rent</span><input id="b0" type="number" min="0" placeholder="$" oninput="calcB()"></div>
+        <div class="b-row"><span>Groceries</span><input id="b1" type="number" min="0" placeholder="$" oninput="calcB()"></div>
+        <div class="b-row"><span>Phone</span><input id="b2" type="number" min="0" placeholder="$" oninput="calcB()"></div>
+        <div class="b-row"><span>Transportation</span><input id="b3" type="number" min="0" placeholder="$" oninput="calcB()"></div>
+        <div class="b-row"><span>Utilities</span><input id="b4" type="number" min="0" placeholder="$" oninput="calcB()"></div>
+        <div class="b-row"><span>Personal care</span><input id="b5" type="number" min="0" placeholder="$" oninput="calcB()"></div>
+        <div class="b-row"><span>Entertainment</span><input id="b6" type="number" min="0" placeholder="$" oninput="calcB()"></div>
+        <div class="b-row"><span>Dental bill</span><input id="b7" type="number" min="0" placeholder="$600" oninput="calcB()"></div>
+        <div class="b-row"><span>Emergency savings</span><input id="b8" type="number" min="0" placeholder="$" oninput="calcB()"></div>
+      </div>
+      <div class="b-total" id="btotal" style="background:var(--gray-100);color:var(--text-muted)"><span>Total spent</span><span id="btot-n">$0</span></div>
+      <div class="b-total" id="bremain" style="background:var(--success-light);color:var(--success)"><span>Remaining from $2,400</span><span id="brem-n">$2,400</span></div>
+      <div class="row"><button class="btn btn-primary" onclick="subBudget()">Submit budget for feedback &#x2192;</button></div>
+      <div id="budget-fb"></div>
+      <div id="budget-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">Next activity &#x2192;</button></div></div>
+    </div>`;
+  } else if(c===2){
+    h=`<div class="card">
+      <div class="card-header"><div class="step-num sn-active">3</div><div><div class="card-title">Alumni wisdom — guided reflection</div><div class="card-sub">What would they tell you?</div></div></div>
+      <div class="prompt">
+        <strong>Three things real Upward Bound alumni have said:</strong><br><br>
+        <em>"The first semester, I cried almost every week. I thought everyone else was smarter than me. They weren't — they were just better at pretending."</em><br><br>
+        <em>"No one taught me about credit cards. I had $4,000 in debt before I turned 20. Start your emergency fund the day you get your first paycheck — even if it's $25."</em><br><br>
+        <em>"What changed everything for me was learning to ask for help. I wasted a whole year trying to figure things out alone because I was embarrassed."</em>
+      </div>
+      <div class="q-text" style="margin-bottom:10px">Which quote hits closest to home — and what does it make you want to do differently this summer?</div>
+      <textarea id="alumni" placeholder="The quote that resonates most is... because...
+One thing I'm going to do differently is..." style="min-height:100px">${S.resp.alumni||''}</textarea>
+      <div class="row"><button class="btn btn-primary" onclick="subAlumni()">Get AI reflection &#x2192;</button></div>
+      <div id="alumni-fb"></div>
+      <div id="alumni-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">Next: Decision dilemmas &#x2192;</button></div></div>
+    </div>`;
+  } else if(c===3){
+    h=`<div class="card">
+      <div class="card-header"><div class="step-num sn-active">4</div><div><div class="card-title">Decision dilemmas</div><div class="card-sub">No right answers — only your reasoning</div></div><div class="timer-badge">&#x23F1; 15 min</div></div>
+      <div class="prompt">Vote on each scenario. Then explain your reasoning for the dilemma that was hardest to decide.</div>
+      <div class="q-label" style="margin-top:12px">Dilemma 1 — Academic integrity</div>
+      <div class="q-text">Your best friend asks to copy your AP Chemistry homework. They're falling behind and failing would cost them their scholarship.</div>
+      <div class="vote-grid">
+        <button class="vbtn" id="v1A" onclick="castVote(1,'A')">A. Share it — one assignment won't hurt</button>
+        <button class="vbtn" id="v1B" onclick="castVote(1,'B')">B. Refuse — walk them through it on a call</button>
+        <button class="vbtn" id="v1C" onclick="castVote(1,'C')">C. Share once, tell them to talk to the teacher</button>
+        <button class="vbtn" id="v1D" onclick="castVote(1,'D')">D. Tell a counselor so they get real support</button>
+      </div>
+      <div class="q-label" style="margin-top:12px">Dilemma 2 — Honesty and loyalty</div>
+      <div class="q-text">You're given $10 too much change. Your friend runs the register and has to pay the difference from their own money if it's short.</div>
+      <div class="vote-grid">
+        <button class="vbtn" id="v2A" onclick="castVote(2,'A')">A. Keep it — their mistake, not yours</button>
+        <button class="vbtn" id="v2B" onclick="castVote(2,'B')">B. Return it immediately</button>
+        <button class="vbtn" id="v2C" onclick="castVote(2,'C')">C. Tell your friend privately so they can fix it</button>
+        <button class="vbtn" id="v2D" onclick="castVote(2,'D')">D. Pay it back anonymously over the next few days</button>
+      </div>
+      <div class="q-label" style="margin-top:12px">Dilemma 3 — Standing up</div>
+      <div class="q-text">A classmate is being bullied in the group chat. You haven't said anything mean — but you haven't said anything at all.</div>
+      <div class="vote-grid">
+        <button class="vbtn" id="v3A" onclick="castVote(3,'A')">A. Stay out of it — it's not your business</button>
+        <button class="vbtn" id="v3B" onclick="castVote(3,'B')">B. Text the person privately to check in</button>
+        <button class="vbtn" id="v3C" onclick="castVote(3,'C')">C. Call it out in the group chat</button>
+        <button class="vbtn" id="v3D" onclick="castVote(3,'D')">D. Tell a counselor or trusted adult</button>
+      </div>
+      <div class="divider"></div>
+      <div class="q-text">Which dilemma was hardest to decide — and what does that tell you about your values?</div>
+      <textarea id="dilemma" placeholder="The hardest one for me was... because...
+What I think it says about my values is..." style="min-height:90px">${S.resp.dilemma||''}</textarea>
+      <div class="row"><button class="btn btn-primary" onclick="subDilemma()">Get AI perspective &#x2192;</button></div>
+      <div id="dilemma-fb"></div>
+      <div id="dilemma-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">Final activity &#x2192;</button></div></div>
+    </div>`;
+  } else if(c===4){
+    h=`<div class="card">
+      <div class="card-header"><div class="step-num sn-active">5</div><div><div class="card-title">My summer declaration</div><div class="card-sub">Your words — played back at Week 5</div></div></div>
+      <div class="prompt">Finish this sentence. Make it real and specific. It will be saved and read back to you at the final showcase at the end of the summer.</div>
+      <div class="declaration-big">"This summer, I will…"</div>
+      <textarea id="decl" placeholder="Be specific. Be bold. This is your promise to yourself." style="min-height:70px">${S.resp.declare||''}</textarea>
+      <div class="row"><button class="btn btn-success" onclick="subDecl()">Complete all 3 days &#x2713;</button></div>
+      <div id="decl-fb"></div>
+    </div>`;
+  }
+  document.getElementById('content').innerHTML = h;
+}
+
+function calcB(){
+  const ids = [0,1,2,3,4,5,6,7,8];
+  let total = 0;
+  ids.forEach(i=>{ total += parseFloat(document.getElementById('b'+i)?.value||0); });
+  total = Math.round(total);
+  const rem = 2400 - total;
+  document.getElementById('btot-n').textContent = '$'+total.toLocaleString();
+  document.getElementById('brem-n').textContent = '$'+rem.toLocaleString();
+  const el = document.getElementById('bremain');
+  if(rem < 0){ el.style.background='var(--danger-light)'; el.style.color='var(--danger)'; }
+  else if(rem < 100){ el.style.background='var(--warning-light)'; el.style.color='var(--warning)'; }
+  else { el.style.background='var(--success-light)'; el.style.color='var(--success)'; }
+}
+
+async function subBudget(){
+  const labels=['Rent','Groceries','Phone','Transport','Utilities','Personal care','Entertainment','Dental','Emergency savings'];
+  let total=0, lines=[];
+  for(let i=0;i<9;i++){
+    const v=parseFloat(document.getElementById('b'+i)?.value||0);
+    if(v>0){total+=v;lines.push(`${labels[i]}: $${v}`);}
+  }
+  const rem = 2400 - Math.round(total);
+  S.resp.budget = lines.join(', ')+` | Remaining: $${rem}`;
+  loading('budget-fb');
+  const r=await ai(`You are a financial literacy coach for Upward Bound students. The student just built a monthly budget on $2,400/month in Orlando with a $600 dental bill. Analyze specifically: did they go over? Is rent realistic? Did they save anything? Give 2 concrete, actionable tips. Be real and warm — not preachy or lecture-y. Under 130 words.`,`Budget:\n${lines.join('\n')}\nTotal: $${Math.round(total)}\nRemaining: $${rem}`);
+  showAI('budget-fb',r); show('budget-nx');
+}
+
+function castVote(num, choice){
+  S.votes[num] = choice;
+  'ABCD'.split('').forEach(l=>{
+    const el = document.getElementById(`v${num}${l}`);
+    if(el) el.className = 'vbtn' + (l===choice?' voted':'');
+  });
+}
+
+async function subAlumni(){
+  const v=document.getElementById('alumni').value.trim();
+  if(v.length<20){alert('Please write more.');return;}
+  S.resp.alumni=v; loading('alumni-fb');
+  const r=await ai(`You are an Upward Bound coach. The student reflected on alumni wisdom quotes about imposter syndrome, debt, and asking for help. Affirm what they wrote. Connect it to one concrete thing they can do THIS summer. End with a warm, encouraging line. Under 110 words.`,`Student: ${S.name}\nReflection:\n${v}`);
+  showAI('alumni-fb',r); show('alumni-nx');
+}
+
+async function subDilemma(){
+  const v=document.getElementById('dilemma').value.trim();
+  if(v.length<20){alert('Please explain your reasoning first.');return;}
+  S.resp.dilemma=v;
+  const voteStr=Object.entries(S.votes).map(([d,c])=>`Dilemma ${d}: ${c}`).join(', ');
+  loading('dilemma-fb');
+  const r=await ai(`You are a life skills coach for Upward Bound students. The student voted on 3 ethical dilemmas and explained their reasoning. Don't tell them they were right or wrong. Affirm their reasoning process. Introduce one framework naturally: short-term vs long-term, who is affected, or the daylight test. Ask one sharp follow-up question. Under 120 words.`,`Student: ${S.name}\nVotes: ${voteStr||'(no votes recorded)'}\nReasoning: ${v}`);
+  showAI('dilemma-fb',r); show('dilemma-nx');
+}
+
+async function subDecl(){
+  const v=document.getElementById('decl').value.trim();
+  if(v.length<15){alert('Please complete your declaration.');return;}
+  S.resp.declare=v; loading('decl-fb');
+  const r=await ai(`You are an Upward Bound coach delivering a final, powerful closing message. The student completed all 3 virtual workshops and wrote their summer declaration. Reflect their exact declaration back. Tell them it's recorded and will be played at Week 5. Make them feel the weight of what they committed to — in the best way. Warm, powerful, personal. Under 120 words.`,`Student: ${S.name}\nDeclaration: "This summer, I will ${v}"`);
+  showAI('decl-fb',r);
+  markDone(3);
+  document.getElementById('content').innerHTML += `<div class="complete"><div class="complete-title" style="font-size:26px">All 3 days complete, ${S.name}.</div><div class="complete-sub" style="font-size:15px;margin-top:8px;line-height:1.7">You showed up three times. Virtually. Before the summer even started.<br>That tells us everything we need to know about you.<br><br><strong>See you in person. Let's go.</strong></div></div>`;
+}
+
+render();
+</script>
+</body>
+</html>

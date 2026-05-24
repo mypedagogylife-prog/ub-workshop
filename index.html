@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upward Bound — Virtual Week 1</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#5B50C8;--purple-light:#EEEDFE;--purple-dark:#3C3489;--teal:#1D9E75;--teal-light:#E1F5EE;--amber:#BA7517;--amber-light:#FAEEDA;--gray-100:#F7F6F3;--gray-200:#EDEBE5;--gray-400:#9B9890;--success:#1D9E75;--success-light:#E1F5EE;--danger:#D85A30;--danger-light:#FAECE7;--warning:#BA7517;--warning-light:#FAEEDA;--white:#FFFFFF;--text:#1A1917;--text-muted:#6B6965;--border:rgba(0,0,0,0.08);--border-med:rgba(0,0,0,0.14);--radius:10px;--radius-lg:16px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--gray-100);color:var(--text);min-height:100vh;line-height:1.6}
+.shell{max-width:740px;margin:0 auto;padding:24px 16px 80px}
+.topbar{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.logo{font-family:'Playfair Display',serif;font-size:17px;color:var(--purple-dark)}
+.logo span{color:var(--gray-400);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:400;margin-left:8px}
+.day-tabs{display:flex;gap:4px}
+.dtab{padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border-med);background:transparent;color:var(--text-muted);transition:all .15s;font-family:'DM Sans',sans-serif}
+.dtab:hover{background:var(--gray-100)}
+.dtab.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+.dtab.done{background:var(--success-light);color:var(--success);border-color:var(--success)}
+.dtab.done::after{content:' ✓'}
+.greeting{font-size:13px;color:var(--text-muted);font-weight:500}
+.pbar-wrap{background:var(--gray-200);border-radius:4px;height:5px;margin-bottom:20px;overflow:hidden}
+.pbar-fill{height:100%;background:var(--purple);border-radius:4px;transition:width .5s ease}
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;margin-bottom:16px}
+.card-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
+.step-num{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0}
+.sn-active{background:var(--purple-light);color:var(--purple-dark)}
+.card-title{font-size:16px;font-weight:600;color:var(--text)}
+.card-sub{font-size:13px;color:var(--text-muted);margin-top:2px}
+.timer-badge{margin-left:auto;font-size:12px;font-weight:500;color:var(--purple);background:var(--purple-light);padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.intro-box{border-left:4px solid var(--purple);background:var(--purple-light);border-radius:0 var(--radius) var(--radius) 0;padding:14px 16px;margin-bottom:16px}
+.intro-label{font-size:11px;font-weight:600;color:var(--purple);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.intro-text{font-size:14px;color:var(--purple-dark);line-height:1.65}
+.example-box{background:var(--gray-100);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px;font-size:13px;line-height:1.8;color:var(--text-muted);font-style:italic}
+.example-label{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;font-style:normal}
+.prompt{background:var(--gray-100);border-radius:var(--radius);padding:14px 16px;font-size:14px;color:var(--text-muted);line-height:1.65;margin-bottom:16px}
+.prompt strong{color:var(--text);font-weight:600}
+.ref-box{background:var(--purple-light);border-radius:var(--radius);padding:12px 16px;margin-bottom:10px;font-size:13px;line-height:2;color:var(--purple-dark)}
+.ref-label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--purple);margin-bottom:6px}
+textarea{width:100%;min-height:110px;padding:12px 14px;font-size:14px;border:1px solid var(--border-med);border-radius:var(--radius);background:var(--white);color:var(--text);resize:vertical;font-family:'DM Sans',sans-serif;line-height:1.6;transition:border .15s}
+textarea:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(91,80,200,0.1)}
+.name-inp{padding:10px 14px;font-size:15px;font-weight:500;border:1px solid var(--border-med);border-radius:var(--radius);background:var(--white);color:var(--text);width:100%;max-width:300px;font-family:'DM Sans',sans-serif;transition:border .15s}
+.name-inp:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(91,80,200,0.1)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;border:1px solid var(--border-med);background:transparent;color:var(--text);transition:all .15s;font-family:'DM Sans',sans-serif}
+.btn:hover{background:var(--gray-100)}
+.btn:active{transform:scale(0.98)}
+.btn-primary{background:var(--purple);color:#fff;border-color:var(--purple)}
+.btn-primary:hover{background:var(--purple-dark);border-color:var(--purple-dark)}
+.btn-success{background:var(--success);color:#fff;border-color:var(--success)}
+.row{display:flex;gap:8px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+.ai-box{background:var(--purple-light);border-radius:var(--radius-lg);padding:16px 18px;margin-top:16px}
+.ai-label{font-size:11px;font-weight:600;color:var(--purple-dark);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.ai-text{font-size:14px;color:var(--purple-dark);line-height:1.7}
+.dots{display:flex;gap:5px;padding:4px 0}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--purple);opacity:.3;animation:pulse 1.2s infinite}
+.dot:nth-child(2){animation-delay:.2s}
+.dot:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+.choices{display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.choice{padding:11px 14px;border-radius:var(--radius);font-size:14px;text-align:left;cursor:pointer;border:1px solid var(--border-med);background:var(--white);color:var(--text);transition:all .15s;font-family:'DM Sans',sans-serif;line-height:1.4}
+.choice:hover:not(:disabled){border-color:var(--purple);background:var(--purple-light)}
+.choice.correct{background:var(--success-light);border-color:var(--success);color:var(--success);font-weight:500}
+.choice.wrong{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
+.explain-box{background:var(--gray-100);border-left:3px solid var(--purple);border-radius:0 var(--radius) var(--radius) 0;padding:12px 14px;margin-top:8px;font-size:13px;color:var(--text-muted);line-height:1.65}
+.budget-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.b-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--gray-100);border-radius:8px;font-size:13px;color:var(--text)}
+.b-row input{width:80px;text-align:right;padding:4px 8px;font-size:13px;border:1px solid var(--border-med);border-radius:6px;background:var(--white);color:var(--text);font-family:'DM Sans',sans-serif}
+.b-row input:focus{outline:none;border-color:var(--purple)}
+.b-total{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;margin-top:6px;transition:background .2s,color .2s}
+.vote-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0}
+.vbtn{padding:10px 12px;border-radius:var(--radius);font-size:13px;text-align:left;cursor:pointer;border:1px solid var(--border-med);background:var(--white);color:var(--text);transition:all .15s;line-height:1.4;font-family:'DM Sans',sans-serif}
+.vbtn:hover{border-color:var(--purple);background:var(--purple-light)}
+.vbtn.voted{background:var(--purple-light);border-color:var(--purple);color:var(--purple-dark);font-weight:500}
+.q-label{font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px}
+.q-text{font-size:14px;font-weight:500;color:var(--text);margin-bottom:8px;line-height:1.5}
+.passage{background:var(--gray-100);border-radius:var(--radius);padding:12px 14px;font-size:13px;line-height:1.7;color:var(--text-muted);margin-bottom:12px;font-style:italic}
+.complete{background:var(--success-light);border:1px solid var(--success);border-radius:var(--radius-lg);padding:28px;text-align:center;margin-top:16px}
+.complete-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--success);margin-bottom:6px}
+.complete-sub{font-size:14px;color:var(--success);line-height:1.65;margin-top:6px}
+.declaration-prompt{font-family:'Playfair Display',serif;font-size:20px;color:var(--purple-dark);margin:16px 0 10px;line-height:1.3}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <div class="logo">Upward Bound <span>Virtual Week 1</span></div>
+    <div class="day-tabs">
+      <button class="dtab active" onclick="switchDay(1)" id="tab1">Day 1</button>
+      <button class="dtab" onclick="switchDay(2)" id="tab2">Day 2</button>
+      <button class="dtab" onclick="switchDay(3)" id="tab3">Day 3</button>
+    </div>
+    <div class="greeting" id="greet">Welcome!</div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbar" style="width:0%"></div></div>
+  <div id="content"></div>
+</div>
+<script>
+const S={name:'',day:1,steps:{1:{cur:0,done:[]},2:{cur:0,done:[]},3:{cur:0,done:[]}},resp:{},votes:{}};
+const DAYS={1:['welcome','poem','events','pitch','preview'],2:['d2start','truths','act-eng','act-math','goals','vision'],3:['d3start','budget','alumni','dilemma','declare']};
+
+async function ai(system,user){
+  try{
+    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system,user})});
+    if(!res.ok){const e=await res.json().catch(()=>({}));return e.error||'Something went wrong. Please try again.';}
+    const d=await res.json();return d.text||'No response. Please try again.';
+  }catch{return 'Could not reach the AI coach. Please check your connection and try again.';}
+}
+
+function loading(id){document.getElementById(id).innerHTML=`<div class="ai-box"><div class="ai-label">AI Coach</div><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;}
+function showAI(id,txt){document.getElementById(id).innerHTML=`<div class="ai-box"><div class="ai-label">AI Coach</div><div class="ai-text">${txt.replace(/\n/g,'<br>')}</div></div>`;}
+function show(id){const el=document.getElementById(id);if(el)el.style.display='block';}
+function val(id){const el=document.getElementById(id);return el?el.value.trim():'';}
+
+function updateProgress(){const steps=DAYS[S.day];const pct=Math.round((S.steps[S.day].done.length/steps.length)*100);document.getElementById('pbar').style.width=pct+'%';}
+function advance(){const steps=DAYS[S.day];const s=S.steps[S.day];if(!s.done.includes(steps[s.cur]))s.done.push(steps[s.cur]);if(s.cur<steps.length-1)s.cur++;updateProgress();render();}
+function markDone(day){const steps=DAYS[day];const s=S.steps[day];const cur=steps[s.cur];if(!s.done.includes(cur))s.done.push(cur);updateProgress();const tab=document.getElementById('tab'+day);tab.className='dtab'+(S.day===day?' active':'')+(s.done.length===steps.length?' done':'');}
+function switchDay(d){S.day=d;[1,2,3].forEach(i=>{const all=DAYS[i].length,done=S.steps[i].done.length;document.getElementById('tab'+i).className='dtab'+(i===d?' active':'')+(done===all&&all>0?' done':'');});updateProgress();render();}
+function render(){if(S.day===1)rDay1();if(S.day===2)rDay2();if(S.day===3)rDay3();}
+
+// ── DAY 1 ──────────────────────────────────────────────────────
+function rDay1(){const c=S.steps[1].cur;const fns=[d1_welcome,d1_poem,d1_events,d1_pitch,d1_preview];document.getElementById('content').innerHTML=fns[c]();}
+
+function d1_welcome(){return `<div class="card">
+  <div class="card-header"><div class="step-num sn-active">1</div><div><div class="card-title">Welcome to Upward Bound</div><div class="card-sub">Day 1 — Who Are You?</div></div></div>
+  <div class="intro-box"><div class="intro-label">About Day 1</div><div class="intro-text">This is your first day of a 3-day virtual workshop. You'll work at your own pace — no rushing, no grades. An AI coach will read everything you write and respond personally to you.<br><br>Today is all about your voice, your identity, and getting excited about the summer ahead. There are 5 activities. Most take 8–15 minutes each.</div></div>
+  <div class="prompt"><strong>Let's start with your name.</strong> The AI coach will use it throughout all three days.</div>
+  <input class="name-inp" id="nf" placeholder="Your first name..." value="${S.name}">
+  <div class="row"><button class="btn btn-primary" onclick="saveName()">Let's go →</button></div>
+</div>`;}
+
+function d1_poem(){return `<div class="card">
+  <div class="card-header"><div class="step-num sn-active">2</div><div><div class="card-title">The "I Am From" Poem</div><div class="card-sub">Identity · Voice · Public speaking</div></div><div class="timer-badge">⏱ 8 min</div></div>
+  <div class="intro-box">
+    <div class="intro-label">What is this activity?</div>
+    <div class="intro-text">The "I Am From" poem is a way to tell your story using specific details — the places, people, smells, sounds, and experiences that made you who you are. There are no wrong answers. The goal is honesty and specificity, not perfection.<br><br>When you're done, the AI coach will read your poem and give you personal feedback. This also launches your <strong>public speaking practice</strong> — you'll build on this all summer.</div>
+  </div>
+  <div class="example-box">
+    <div class="example-label">Example poem (by a past student)</div>
+    I am from the smell of tamales on Christmas morning and the sound of my abuela's telenovelas through the wall.<br>
+    I am from "mija, education is the one thing no one can take from you."<br>
+    I am from a woman who worked two jobs and never complained.<br>
+    I am from being told I was too quiet to be a leader.<br>
+    I am from the first in my family to apply to college.<br>
+    I am from somewhere — and somewhere is taking me everywhere.
+  </div>
+  <div class="ref-box">
+    <div class="ref-label">Your 7 lines — keep this visible while you write</div>
+    <div>1. I am from... <span style="color:var(--text-muted)">(a place, a smell, or a sound from your life)</span></div>
+    <div>2. I am from... <span style="color:var(--text-muted)">(a food or routine from childhood)</span></div>
+    <div>3. I am from... <span style="color:var(--text-muted)">(something your family says or believes)</span></div>
+    <div>4. I am from... <span style="color:var(--text-muted)">(a person who shaped you — no names needed)</span></div>
+    <div>5. I am from... <span style="color:var(--text-muted)">(something you were told you couldn't do)</span></div>
+    <div>6. I am from... <span style="color:var(--text-muted)">(something you're proud of)</span></div>
+    <div>7. I am from... <span style="color:var(--text-muted)">(where you're going — a dream or goal)</span></div>
+  </div>
+  <textarea id="poem" placeholder="Write your poem here — one line at a time. Be specific and honest." style="min-height:180px">${S.resp.poem||''}</textarea>
+  <div class="row"><button class="btn btn-primary" onclick="subPoem()">Submit for AI feedback →</button></div>
+  <div id="poem-fb"></div>
+  <div id="poem-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">Next activity →</button></div></div>
+</div>`;}
+
+function d1_events(){return `<div class="card">
+  <div class="card-header"><div class="step-num sn-active">3</div><div><div class="card-title">Current Events — Your Take</div><div class="card-sub">Critical thinking</div></div><div class="timer-badge">⏱ 10 min</div></div>
+  <div class="intro-box">
+    <div class="intro-label">What is this activity?</div>
+    <div class="intro-text">Being informed about the world is a superpower. This activity teaches you to do more than just read the news — it teaches you to <strong>analyze it</strong>. You'll read one headline and answer three questions that push you to think critically about what it means for your life and future.<br><br>The AI coach will engage with your thinking and push you one step further.</div>
+  </div>
+  <div class="prompt"><strong>Today's headline:</strong><br><br>"Scientists confirm the ocean absorbed record levels of heat last year — raising urgent concerns about sea level rise, stronger hurricanes, and coral reef extinction within a generation."</div>
+  <div class="ref-box">
+    <div class="ref-label">Answer all three questions in the box below</div>
+    <div>1. What happened? <span style="color:var(--text-muted)">(explain it in your own words)</span></div>
+    <div>2. Why does this matter to someone your age specifically?</div>
+    <div>3. If you were in charge — what would you do?</div>
+  </div>
+  <textarea id="ce" placeholder="Type your answers here..." style="min-height:130px">${S.resp.events||''}</textarea>
+  <div class="row"><button class="btn btn-primary" onclick="subCE()">Get AI feedback →</button></div>
+  <div id="ce-fb"></div>
+  <div id="ce-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">Next activity →</button></div></div>
+</div>`;}
+
+function d1_pitch(){return `<div class="card">
+  <div class="card-header"><div class="step-num sn-active">4</div><div><div class="card-title">Your 60-Second Pitch</div><div class="card-sub">Public speaking practice</div></div><div class="timer-badge">⏱ 15 min</div></div>
+  <div class="intro-box">
+    <div class="intro-label">What is this activity?</div>
+    <div class="intro-text">Public speaking is one of the most valuable skills you can build — and it starts here. A 60-second pitch is a short, focused spoken response where you hook your audience, make your point, and close with impact.<br><br>You'll write your pitch out first, then the AI coach will give you a <strong>Glow</strong> (what worked) and a <strong>Grow</strong> (one thing to improve). By Week 5, you'll deliver a full TED-style talk in person — this is where that journey starts.</div>
+  </div>
+  <div class="example-box">
+    <div class="example-label">Example 60-second pitch opening</div>
+    "Every night in my neighborhood, the streetlights go out at midnight. Not because anyone turned them off — because no one fixed them. I'm 16, and I already know that where you live determines how safe you feel walking home. If I had the power, I'd start with light — because everything else gets easier when people aren't afraid of the dark."
+  </div>
+  <div class="ref-box">
+    <div class="ref-label">Question to answer — aim for 120–150 words</div>
+    <div><strong>What is one problem in your community you would fix if you had the power?</strong></div>
+    <div style="margin-top:8px;color:var(--text-muted)">Structure: Hook → Problem → Solution → Closing line</div>
+  </div>
+  <textarea id="pitch" placeholder="Write your pitch here. Open strong. Be specific. Close with impact." style="min-height:150px">${S.resp.pitch||''}</textarea>
+  <div class="row"><button class="btn btn-primary" onclick="subPitch()">Get coaching feedback →</button></div>
+  <div id="pitch-fb"></div>
+  <div id="pitch-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">Next activity →</button></div></div>
+</div>`;}
+
+function d1_preview(){return `<div class="card">
+  <div class="card-header"><div class="step-num sn-active">5</div><div><div class="card-title">Your Summer Preview</div><div class="card-sub">What's coming in person</div></div></div>
+  <div class="intro-box">
+    <div class="intro-label">What's next</div>
+    <div class="intro-text">After this virtual week, you'll spend four weeks in person. These aren't ordinary classes — they were chosen to challenge you, excite you, and open doors. Take a look at what's coming, then tell us how you're feeling about it.</div>
+  </div>
+  <div class="prompt">
+    <strong>${S.name}, here is what you're about to experience:</strong><br><br>
+    English &nbsp;·&nbsp; Upper Level Math &nbsp;·&nbsp; Human Anatomy &nbsp;·&nbsp; Chemistry &nbsp;·&nbsp; Film Making &nbsp;·&nbsp; <strong>Drones</strong> &nbsp;·&nbsp; Fitness &nbsp;·&nbsp; Martial Arts<br><br>
+    Which course excites you most — and why? Which one makes you most nervous?
+  </div>
+  <textarea id="prev" placeholder="I'm most excited about... because...&#10;The one that makes me nervous is... because..." style="min-height:90px">${S.resp.preview||''}</textarea>
+  <div class="row"><button class="btn btn-success" onclick="subPreview()">Complete Day 1 ✓</button></div>
+  <div id="prev-fb"></div>
+</div>`;}
+
+async function saveName(){const n=val('nf');if(!n){alert('Please enter your name!');return;}S.name=n;document.getElementById('greet').textContent='Hi, '+n+'!';advance();}
+async function subPoem(){const v=val('poem');if(v.length<40){alert('Please complete at least a few lines before submitting.');return;}S.resp.poem=v;loading('poem-fb');const r=await ai(`You are a warm, affirming Upward Bound workshop coach responding to a high school student's "I Am From" poem. 1) Name 2 vivid specific details you loved — quote short phrases from their actual poem. 2) Give one gentle suggestion to make one line even more specific. Keep it conversational and encouraging, under 110 words. End with a brief hype line about their voice.`,`Student: ${S.name}\nPoem:\n${v}`);showAI('poem-fb',r);show('poem-nx');}
+async function subCE(){const v=val('ce');if(v.length<30){alert('Please write more before submitting.');return;}S.resp.events=v;loading('ce-fb');const r=await ai(`You are an Upward Bound coach. The student analyzed a current events headline about record ocean heat levels. Affirm what was strong in their analysis. Then ask ONE sharp follow-up question that connects this issue to their own future or community. Under 90 words.`,`Student: ${S.name}\nResponse:\n${v}`);showAI('ce-fb',r);show('ce-nx');}
+async function subPitch(){const v=val('pitch');if(v.length<50){alert('Please write more before submitting.');return;}S.resp.pitch=v;loading('pitch-fb');const r=await ai(`You are a public speaking coach for Upward Bound high school students. Give: 1) GLOW — one specific thing that worked well, quoting their exact words back. 2) GROW — one concrete technique to make it stronger (stronger hook, tighter close, more specific detail, etc). Be direct and encouraging. Under 120 words.`,`Student: ${S.name}\nPitch:\n${v}`);showAI('pitch-fb',r);show('pitch-nx');}
+async function subPreview(){const v=val('prev');if(v.length<20){alert('Please write your answer before finishing.');return;}S.resp.preview=v;loading('prev-fb');const r=await ai(`You are an enthusiastic Upward Bound coach. The student shared which course excites them most and which makes them nervous. Validate both feelings. Connect their nervousness to the growth mindset — nervousness means your brain knows it's about to grow. End with a punchy personal hype line. Under 90 words.`,`Student: ${S.name}\nResponse:\n${v}`);showAI('prev-fb',r);markDone(1);setTimeout(()=>{document.getElementById('content').innerHTML+=`<div class="complete"><div class="complete-title">Day 1 complete, ${S.name}!</div><div class="complete-sub">You wrote a poem. You analyzed the news. You pitched your ideas.<br>Switch to Day 2 above when you're ready.</div></div>`;},400);}
+
+// ── DAY 2 ──────────────────────────────────────────────────────
+const ACT={eng:[{q:'Which best replaces the underlined sentence?',pass:'"Marcus had always been interested in science and volunteered at a hospital. [The experience changed his perspective greatly.] Working alongside nurses and doctors, he realized that medicine required not only knowledge but also compassion."',opts:['A. The experience, which was very impactful, changed his perspective in a great way.','B. His perspective was greatly changed by the experience he had there.','C. Working there shifted how Marcus thought about his future career.','D. The experience changed his perspective, and it was a big change for him.'],ans:'C',explain:'C is correct — most concise and shows HOW his perspective changed (toward his career). A and D are wordy/redundant. B uses awkward passive voice. Strategy: eliminate wordy, vague, or redundant choices.'},{q:'Where does this sentence best fit? "Some researchers believe older trees use these networks to support younger seedlings."',pass:'"(1) Scientists discovered trees communicate through underground fungal networks. (2) These networks allow trees to share nutrients and send warning signals when under attack."',opts:['A. Before sentence 1 as an introduction.','B. After sentence 1 to give context.','C. After sentence 2 — it gives a specific example of how the network is used.','D. It should NOT be added — it contradicts the main idea.'],ans:'C',explain:'C is correct. The new sentence gives a specific example of network use — supporting seedlings. It follows sentence 2 logically. Always check what comes before AND after any insertion point.'},{q:'Which choice best concludes a paragraph about community involvement in a park renovation?',pass:'"The city council approved a renovation including new trails, a community garden, and an amphitheater. Many residents submitted feedback during public comment, and their ideas were incorporated."',opts:['A. The amphitheater will seat 500 people and cost $200,000.','B. Council members said the park would open by next spring.','C. The final design is a direct reflection of what residents said they wanted.','D. Future phases of renovation are still being discussed.'],ans:'C',explain:'C is correct. The paragraph\'s main idea is community involvement — a strong conclusion reinforces that. A adds cost data. B shifts to timeline. D introduces new info. Always identify the main idea before reading answer choices.'}],math:[{q:'A store sells small drinks ($3.50) and large drinks ($5.00). They sold 80 drinks total and collected $340. How many small drinks were sold?',pass:null,opts:['A. 20','B. 40','C. 60','D. 72'],ans:'B',explain:'B (40). Set up two equations: s + L = 80 and 3.5s + 5L = 340. Substitute L = 80−s: 3.5s + 5(80−s) = 340 → −1.5s = −60 → s = 40. Always name your variables and write both equations before solving.'},{q:'If f(x) = 3x² − 2x + 1, what is f(−2)?',pass:null,opts:['A. −7','B. 9','C. 17','D. 21'],ans:'C',explain:'C (17). f(−2) = 3(−2)² − 2(−2) + 1 = 3(4) + 4 + 1 = 17. Most common mistake: computing (−2)² as −4. Always put negatives in parentheses when substituting into a formula.'},{q:'A rectangle has perimeter 56 ft. Its length is 4 more than twice its width. What is its area?',pass:null,opts:['A. 96 sq ft','B. 128 sq ft','C. 160 sq ft','D. 200 sq ft'],ans:'C',explain:'C (160 sq ft). L + W = 28. Length = 2W + 4. So (2W+4) + W = 28 → W = 8, L = 20. Area = 8 × 20 = 160. Always plug your answer back in to verify it works.'}]};
+
+function rDay2(){const c=S.steps[2].cur;const fns=[d2_start,d2_truths,d2_actEng,d2_actMath,d2_goals,d2_vision];document.getElementById('content').innerHTML=fns[c]();if(c===2)setTimeout(()=>renderQ('eng',0),50);if(c===3)setTimeout(()=>renderQ('math',0),50);}
+
+function d2_start(){return `<div class="card">
+  <div class="card-header"><div class="step-num sn-active">1</div><div><div class="card-title">Welcome to Day 2</div><div class="card-sub">How do you succeed?</div></div></div>
+  <div class="intro-box"><div class="intro-label">About Day 2</div><div class="intro-text">Today is about building the skills that turn potential into results. You'll work on ACT strategy (English and Math), set SMART goals for the summer, and create a vision for your future.<br><br>The ACT section uses real question types — click an answer and you'll get instant feedback explaining exactly why it's right or wrong. No guessing games.</div></div>
+  <div class="row"><button class="btn btn-primary" onclick="advance()">Start Day 2 →</button></div>
+</div>`;}
+
+function d2_truths(){return `<div class="card">
+  <div class="card-header"><div class="step-num sn-active">2</div><div><div class="card-title">Two Truths, One Goal</div><div class="card-sub">Community building + intention setting</div></div></div>
+  <div class="intro-box"><div class="intro-label">What is this activity?</div><div class="intro-text">This is how we start Day 2 as a group — getting to know each other better and setting a real intention for the summer. Two facts that are true about you, and one goal that is specific enough to actually achieve.<br><br>"Do better in school" is a wish. "Raise my ACT score from 19 to 23 by August by practicing 20 minutes a day" is a goal.</div></div>
+  <div class="ref-box"><div class="ref-label">What to include</div>
+    <div>1. Truth 1 — something real and interesting about you</div>
+    <div>2. Truth 2 — another true fact (could be funny, surprising, or personal)</div>
+    <div>3. Your goal for this summer — specific, with a number or deadline</div>
+  </div>
+  <textarea id="truths" placeholder="Truth 1: ...&#10;Truth 2: ...&#10;My goal for this summer: ..." style="min-height:100px">${S.resp.truths||''}</textarea>
+  <div class="row"><button class="btn btn-primary" onclick="subTruths()">Submit →</button></div>
+  <div id="truths-fb"></div>
+  <div id="truths-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">Next →</button></div></div>
+</div>`;}
+
+function d2_actEng(){return `<div class="card">
+  <div class="card-header"><div class="step-num sn-active">3</div><div><div class="card-title">ACT Strategy — English</div><div class="card-sub">3 questions · Process of elimination</div></div><div class="timer-badge">⏱ 15 min</div></div>
+  <div class="intro-box"><div class="intro-label">What is this activity?</div><div class="intro-text">The ACT English section is not a grammar test — it's a <strong>strategy test</strong>. Every question has one right answer because it's the most concise and fully supported by the passage. The other three answers have a specific flaw — too wordy, adds outside info, passive voice, or wrong placement.<br><br>Click an answer, then read the explanation carefully. The explanation teaches you the strategy, not just the answer. <strong>Every ACT point = scholarship money.</strong></div></div>
+  <div id="act-eng-container"></div>
+  <div id="eng-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">On to Math →</button></div></div>
+</div>`;}
+
+function d2_actMath(){return `<div class="card">
+  <div class="card-header"><div class="step-num sn-active">4</div><div><div class="card-title">ACT Strategy — Math</div><div class="card-sub">3 questions · Show your work</div></div><div class="timer-badge">⏱ 15 min</div></div>
+  <div class="intro-box"><div class="intro-label">What is this activity?</div><div class="intro-text">ACT Math is won or lost on process — not talent. The students who score highest are the ones who write every step, draw diagrams, and plug answers back in to check. Solving in your head is the #1 mistake.<br><br>Work through each problem on paper first, then pick your answer. The explanation will show you the exact steps.</div></div>
+  <div id="act-math-container"></div>
+  <div id="math-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">Next: SMART Goals →</button></div></div>
+</div>`;}
+
+function d2_goals(){return `<div class="card">
+  <div class="card-header"><div class="step-num sn-active">5</div><div><div class="card-title">My SMART Goals</div><div class="card-sub">Specific · Measurable · Achievable · Relevant · Time-bound</div></div><div class="timer-badge">⏱ 10 min</div></div>
+  <div class="intro-box"><div class="intro-label">What is this activity?</div><div class="intro-text">A SMART goal is one you can actually measure and track. Athletes use them. CEOs use them. Scientists use them. Now you will.<br><br>The most common mistake is being too vague. "Do better" isn't SMART. "Score a 24 on the ACT by August by completing one practice section every day" is SMART.</div></div>
+  <div class="example-box">
+    <div class="example-label">SMART Goal example</div>
+    <strong>Vague:</strong> I want to get better at writing.<br>
+    <strong>SMART:</strong> I will write in my journal for 15 minutes every day this summer and finish one college essay draft by August 1st.
+  </div>
+  <div class="ref-box"><div class="ref-label">Write two goals below</div>
+    <div>Academic goal — something school or test related</div>
+    <div>Personal goal — health, money, relationships, or a skill</div>
+    <div style="margin-top:6px;color:var(--text-muted)">Each goal needs: what, by when, and how you'll get there</div>
+  </div>
+  <textarea id="goals" placeholder="Academic goal: I will...&#10;By [date] because...&#10;I'll know I achieved it when...&#10;&#10;Personal goal: I will...&#10;By [date] because...&#10;I'll know I achieved it when..." style="min-height:160px">${S.resp.goals||''}</textarea>
+  <div class="row"><button class="btn btn-primary" onclick="subGoals()">Get feedback on my goals →</button></div>
+  <div id="goals-fb"></div>
+  <div id="goals-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">Final activity →</button></div></div>
+</div>`;}
+
+function d2_vision(){return `<div class="card">
+  <div class="card-header"><div class="step-num sn-active">6</div><div><div class="card-title">My College Vision</div><div class="card-sub">Where are you going?</div></div></div>
+  <div class="intro-box"><div class="intro-label">What is this activity?</div><div class="intro-text">Research shows that students who write down a specific vision for their future are more likely to achieve it. This isn't daydreaming — it's direction-setting.<br><br>Be bold. Be specific. The AI coach will reflect your vision back to you and connect it to something you can do this summer.</div></div>
+  <div class="ref-box"><div class="ref-label">Answer these in the box below</div>
+    <div>Where do you see yourself at 25?</div>
+    <div>What school or career path are you aiming for?</div>
+    <div>One person you look up to who did something like this</div>
+    <div>The first step you can take THIS summer</div>
+  </div>
+  <textarea id="vision" placeholder="At 25 I want to...&#10;The school or career I'm aiming for is...&#10;Someone I look up to who did this is...&#10;The first step I can take this summer is..." style="min-height:140px">${S.resp.vision||''}</textarea>
+  <div class="row"><button class="btn btn-success" onclick="subVision()">Complete Day 2 ✓</button></div>
+  <div id="vision-fb"></div>
+</div>`;}
+
+function renderQ(section,idx){const qs=ACT[section];if(idx>=qs.length){show(section==='eng'?'eng-nx':'math-nx');return;}const q=qs[idx];const cid=`act-${section}-container`;const el=document.getElementById(cid);if(!el)return;let h=`<div id="actq-${section}-${idx}">`;if(idx>0)h+=`<div class="divider"></div>`;h+=`<div class="q-label">Question ${idx+1} of ${qs.length}</div>`;if(q.pass)h+=`<div class="passage">${q.pass}</div>`;h+=`<div class="q-text">${q.q}</div><div class="choices" id="ch-${section}-${idx}">`;q.opts.forEach((opt,i)=>{h+=`<button class="choice" onclick="answerQ('${section}',${idx},'${'ABCD'[i]}')">${opt}</button>`;});h+=`</div><div id="exp-${section}-${idx}"></div></div>`;el.innerHTML+=h;}
+function answerQ(section,idx,chosen){const q=ACT[section][idx];const isRight=chosen===q.ans;document.querySelectorAll(`#ch-${section}-${idx} .choice`).forEach(btn=>{btn.disabled=true;const letter=btn.textContent.trim()[0];if(letter===q.ans)btn.className='choice correct';else if(letter===chosen&&!isRight)btn.className='choice wrong';});document.getElementById(`exp-${section}-${idx}`).innerHTML=`<div class="explain-box"><strong>${isRight?'Correct!':'Not quite —'}</strong> ${q.explain}</div>`;setTimeout(()=>renderQ(section,idx+1),700);}
+
+async function subTruths(){const v=val('truths');if(v.length<20){alert('Please add more detail.');return;}S.resp.truths=v;loading('truths-fb');const r=await ai(`You are a warm Upward Bound coach. The student shared two truths and a summer goal. Reflect their goal back and help them sharpen it — does it have a measurable outcome and a deadline? Suggest what to add if missing. Encouraging, under 100 words.`,`Student: ${S.name}\n${v}`);showAI('truths-fb',r);show('truths-nx');}
+async function subGoals(){const v=val('goals');if(v.length<50){alert('Please write more detail in your goals.');return;}S.resp.goals=v;loading('goals-fb');const r=await ai(`You are a SMART goals coach for Upward Bound students. Evaluate both goals against the SMART criteria. Identify the weakest element (usually Measurable or Time-bound) and suggest a specific revision for it. Be encouraging. Under 130 words.`,`Student: ${S.name}\nGoals:\n${v}`);showAI('goals-fb',r);show('goals-nx');}
+async function subVision(){const v=val('vision');if(v.length<30){alert('Please write more.');return;}S.resp.vision=v;loading('vision-fb');const r=await ai(`You are an inspiring Upward Bound coach. The student described their college or career vision. Reflect it back energetically using their specific words. Connect it to one concrete thing they can do THIS summer to move toward it. End with a powerful hype line. Under 100 words.`,`Student: ${S.name}\nVision:\n${v}`);showAI('vision-fb',r);markDone(2);setTimeout(()=>{document.getElementById('content').innerHTML+=`<div class="complete"><div class="complete-title">Day 2 complete, ${S.name}!</div><div class="complete-sub">ACT strategy. SMART goals. A vision for your future.<br>Switch to Day 3 above when you're ready.</div></div>`;},400);}
+
+// ── DAY 3 ──────────────────────────────────────────────────────
+function rDay3(){const c=S.steps[3].cur;const fns=[d3_start,d3_budget,d3_alumni,d3_dilemma,d3_declare];document.getElementById('content').innerHTML=fns[c]();}
+
+function d3_start(){return `<div class="card">
+  <div class="card-header"><div class="step-num sn-active">1</div><div><div class="card-title">Welcome to Day 3</div><div class="card-sub">How do you navigate the world?</div></div></div>
+  <div class="intro-box"><div class="intro-label">About Day 3</div><div class="intro-text">This is the most practical day of the week. Today you'll build real-world skills that most adults wish someone had taught them at your age — budgeting, decision-making under pressure, and learning from people who've been exactly where you are.<br><br>There are no grades here. Just honest reflection and real tools for real life.</div></div>
+  <div class="row"><button class="btn btn-primary" onclick="advance()">Start Day 3 →</button></div>
+</div>`;}
+
+function d3_budget(){return `<div class="card">
+  <div class="card-header"><div class="step-num sn-active">2</div><div><div class="card-title">Budget Simulation — Reality Check</div><div class="card-sub">Financial literacy · Real scenario</div></div><div class="timer-badge">⏱ 15 min</div></div>
+  <div class="intro-box"><div class="intro-label">What is this activity?</div><div class="intro-text">Most people learn about money the hard way — by running out of it. This simulation lets you make mistakes safely, before it counts.<br><br>You've been assigned a real job, a real city, and a real life event. Build your monthly budget using the grid below. The total will update automatically. Try not to go over $2,400.</div></div>
+  <div class="example-box" style="font-style:normal">
+    <div class="example-label">Your scenario</div>
+    <strong>Job:</strong> Medical Office Receptionist &nbsp;·&nbsp; <strong>City:</strong> Orlando, FL<br>
+    <strong>Take-home pay:</strong> $2,400/month<br>
+    <strong>Average 1-BR rent:</strong> $1,300/month<br>
+    <strong>Life event:</strong> Dental emergency — crown needed. Insurance covers 50%. <strong>Your bill: $600.</strong>
+  </div>
+  <div class="budget-grid">
+    <div class="b-row"><span>Rent</span><input id="b0" type="number" min="0" placeholder="$" oninput="calcB()"></div>
+    <div class="b-row"><span>Groceries</span><input id="b1" type="number" min="0" placeholder="$" oninput="calcB()"></div>
+    <div class="b-row"><span>Phone</span><input id="b2" type="number" min="0" placeholder="$" oninput="calcB()"></div>
+    <div class="b-row"><span>Transportation</span><input id="b3" type="number" min="0" placeholder="$" oninput="calcB()"></div>
+    <div class="b-row"><span>Utilities</span><input id="b4" type="number" min="0" placeholder="$" oninput="calcB()"></div>
+    <div class="b-row"><span>Personal care</span><input id="b5" type="number" min="0" placeholder="$" oninput="calcB()"></div>
+    <div class="b-row"><span>Entertainment</span><input id="b6" type="number" min="0" placeholder="$" oninput="calcB()"></div>
+    <div class="b-row"><span>Dental bill</span><input id="b7" type="number" min="0" placeholder="$600" oninput="calcB()"></div>
+    <div class="b-row"><span>Emergency savings</span><input id="b8" type="number" min="0" placeholder="$" oninput="calcB()"></div>
+  </div>
+  <div class="b-total" style="background:var(--gray-100);color:var(--text-muted)"><span>Total spent</span><span id="btot-n">$0</span></div>
+  <div class="b-total" id="bremain" style="background:var(--success-light);color:var(--success)"><span>Remaining from $2,400</span><span id="brem-n">$2,400</span></div>
+  <div class="row"><button class="btn btn-primary" onclick="subBudget()">Submit budget for AI feedback →</button></div>
+  <div id="budget-fb"></div>
+  <div id="budget-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">Next activity →</button></div></div>
+</div>`;}
+
+function d3_alumni(){return `<div class="card">
+  <div class="card-header"><div class="step-num sn-active">3</div><div><div class="card-title">Alumni Wisdom — Guided Reflection</div><div class="card-sub">Learning from those who went before you</div></div></div>
+  <div class="intro-box"><div class="intro-label">What is this activity?</div><div class="intro-text">Real Upward Bound alumni were asked one question: "What do you wish someone had told you?" These are their unscripted answers — no polish, no performance. Just truth.<br><br>Read them slowly. One will hit differently than the others. That's the one to write about.</div></div>
+  <div class="example-box" style="font-style:normal">
+    <div class="example-label">Three things alumni have said</div>
+    <div style="margin-bottom:10px;font-style:italic">"The first semester of college, I cried almost every week. I thought everyone else was smarter than me. They weren't — they were just better at pretending."</div>
+    <div style="margin-bottom:10px;font-style:italic">"No one taught me about credit cards. I had $4,000 in debt before I turned 20. Start your emergency fund the day you get your first paycheck — even if it's only $25."</div>
+    <div style="font-style:italic">"What changed everything was learning to ask for help. I wasted a whole year trying to figure things out alone because I was embarrassed."</div>
+  </div>
+  <div class="ref-box"><div class="ref-label">Reflect on this below</div>
+    <div>Which quote hits closest to home — and why?</div>
+    <div>What is one thing you want to do differently because of it?</div>
+  </div>
+  <textarea id="alumni" placeholder="The quote that resonates most is... because...&#10;One thing I'm going to do differently is..." style="min-height:110px">${S.resp.alumni||''}</textarea>
+  <div class="row"><button class="btn btn-primary" onclick="subAlumni()">Get AI reflection →</button></div>
+  <div id="alumni-fb"></div>
+  <div id="alumni-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">Next: Decision dilemmas →</button></div></div>
+</div>`;}
+
+function d3_dilemma(){return `<div class="card">
+  <div class="card-header"><div class="step-num sn-active">4</div><div><div class="card-title">Decision Dilemmas</div><div class="card-sub">No official right answers — only your reasoning</div></div><div class="timer-badge">⏱ 15 min</div></div>
+  <div class="intro-box"><div class="intro-label">What is this activity?</div><div class="intro-text">The decisions you make in the next few years will shape who you become — not just because of consequences, but because of the habits they build. This activity presents three real dilemmas that students your age actually face.<br><br>Vote on each one, then explain your reasoning for the hardest. The AI coach won't tell you what's right — it will help you understand your own values.</div></div>
+  <div class="q-label" style="margin-top:4px">Dilemma 1 — Academic integrity</div>
+  <div class="q-text">Your best friend is failing AP Chemistry and asks to copy your homework. If they fail, they lose their spot on the varsity team — their path to a college scholarship.</div>
+  <div class="vote-grid">
+    <button class="vbtn" id="v1A" onclick="castVote(1,'A')">A. Share it — one assignment won't hurt anyone</button>
+    <button class="vbtn" id="v1B" onclick="castVote(1,'B')">B. Refuse, but offer to walk them through it on a call</button>
+    <button class="vbtn" id="v1C" onclick="castVote(1,'C')">C. Share it once, tell them to talk to the teacher tomorrow</button>
+    <button class="vbtn" id="v1D" onclick="castVote(1,'D')">D. Tell a counselor so they get real academic support</button>
+  </div>
+  <div class="q-label" style="margin-top:14px">Dilemma 2 — Honesty and loyalty</div>
+  <div class="q-text">You're given $10 too much change at the school store. Your friend runs the register and has to pay the difference from their own money if it's short at the end of the day.</div>
+  <div class="vote-grid">
+    <button class="vbtn" id="v2A" onclick="castVote(2,'A')">A. Keep it — it was their mistake, not yours</button>
+    <button class="vbtn" id="v2B" onclick="castVote(2,'B')">B. Return it immediately, even if it means a short lunch</button>
+    <button class="vbtn" id="v2C" onclick="castVote(2,'C')">C. Tell your friend privately so they can fix the register</button>
+    <button class="vbtn" id="v2D" onclick="castVote(2,'D')">D. Pay it back anonymously over the next few days</button>
+  </div>
+  <div class="q-label" style="margin-top:14px">Dilemma 3 — Standing up</div>
+  <div class="q-text">A classmate is being talked about negatively in the group chat. You haven't said anything mean — but you haven't said anything at all. It's getting worse.</div>
+  <div class="vote-grid">
+    <button class="vbtn" id="v3A" onclick="castVote(3,'A')">A. Stay out of it — getting involved might turn the group on you</button>
+    <button class="vbtn" id="v3B" onclick="castVote(3,'B')">B. Text the person being targeted privately to check in</button>
+    <button class="vbtn" id="v3C" onclick="castVote(3,'C')">C. Call it out directly in the group chat</button>
+    <button class="vbtn" id="v3D" onclick="castVote(3,'D')">D. Tell a trusted adult or counselor what you saw</button>
+  </div>
+  <div class="divider"></div>
+  <div class="ref-box"><div class="ref-label">Reflect below</div>
+    <div>Which dilemma was hardest to decide — and what does that tell you about your values?</div>
+  </div>
+  <textarea id="dilemma" placeholder="The hardest one for me was... because...&#10;What I think it says about my values is..." style="min-height:100px">${S.resp.dilemma||''}</textarea>
+  <div class="row"><button class="btn btn-primary" onclick="subDilemma()">Get AI perspective →</button></div>
+  <div id="dilemma-fb"></div>
+  <div id="dilemma-nx" style="display:none"><div class="divider"></div><div class="row"><button class="btn btn-primary" onclick="advance()">Final activity →</button></div></div>
+</div>`;}
+
+function d3_declare(){return `<div class="card">
+  <div class="card-header"><div class="step-num sn-active">5</div><div><div class="card-title">My Summer Declaration</div><div class="card-sub">Your words — played back at Week 5</div></div></div>
+  <div class="intro-box"><div class="intro-label">What is this activity?</div><div class="intro-text">This is the final activity of your virtual week. You're going to make a public declaration — a promise to yourself about what this summer will mean.<br><br>Your words will be saved and read back to you at the final in-person showcase at the end of Week 5. Make them count.</div></div>
+  <div class="declaration-prompt">"This summer, I will…"</div>
+  <textarea id="decl" placeholder="Be specific. Be bold. This is your promise to yourself." style="min-height:80px">${S.resp.declare||''}</textarea>
+  <div class="row"><button class="btn btn-success" onclick="subDecl()">Complete all 3 days ✓</button></div>
+  <div id="decl-fb"></div>
+</div>`;}
+
+function calcB(){let total=0;for(let i=0;i<9;i++)total+=parseFloat(document.getElementById('b'+i)?.value||0);total=Math.round(total);const rem=2400-total;document.getElementById('btot-n').textContent='$'+total.toLocaleString();document.getElementById('brem-n').textContent='$'+rem.toLocaleString();const el=document.getElementById('bremain');if(rem<0){el.style.background='var(--danger-light)';el.style.color='var(--danger)';}else if(rem<100){el.style.background='var(--warning-light)';el.style.color='var(--warning)';}else{el.style.background='var(--success-light)';el.style.color='var(--success)';}}
+async function subBudget(){const labels=['Rent','Groceries','Phone','Transport','Utilities','Personal','Entertainment','Dental','Savings'];let total=0,lines=[];for(let i=0;i<9;i++){const v=parseFloat(document.getElementById('b'+i)?.value||0);if(v>0){total+=v;lines.push(`${labels[i]}: $${v}`);}}const rem=2400-Math.round(total);S.resp.budget=lines.join(', ')+` | Remaining: $${rem}`;loading('budget-fb');const r=await ai(`You are a financial literacy coach for Upward Bound students. The student built a monthly budget on $2,400/month in Orlando with a $600 dental bill. Analyze specifically: did they go over? Is rent realistic for Orlando? Did they save anything? Give 2 concrete actionable tips. Be warm and real — not preachy or lecture-y. Under 130 words.`,`Budget:\n${lines.join('\n')}\nTotal: $${Math.round(total)}\nRemaining: $${rem}`);showAI('budget-fb',r);show('budget-nx');}
+function castVote(num,choice){S.votes[num]=choice;'ABCD'.split('').forEach(l=>{const el=document.getElementById(`v${num}${l}`);if(el)el.className='vbtn'+(l===choice?' voted':'');});}
+async function subAlumni(){const v=val('alumni');if(v.length<20){alert('Please write more.');return;}S.resp.alumni=v;loading('alumni-fb');const r=await ai(`You are an Upward Bound coach. The student reflected on alumni wisdom quotes about imposter syndrome, debt, and asking for help. Affirm what they wrote warmly. Connect their reflection to one concrete action they can take THIS summer. End with an encouraging line. Under 110 words.`,`Student: ${S.name}\nReflection:\n${v}`);showAI('alumni-fb',r);show('alumni-nx');}
+async function subDilemma(){const v=val('dilemma');if(v.length<20){alert('Please explain your reasoning first.');return;}S.resp.dilemma=v;const voteStr=Object.entries(S.votes).map(([d,c])=>`Dilemma ${d}: ${c}`).join(', ')||'(no votes recorded)';loading('dilemma-fb');const r=await ai(`You are a life skills coach for Upward Bound students. The student voted on 3 ethical dilemmas and explained their reasoning. Do NOT tell them they were right or wrong. Affirm their reasoning process. Introduce one of these frameworks naturally: short-term vs long-term thinking, who is affected by the decision, or the daylight test (would you be okay if everyone could see this). Ask one sharp follow-up question. Under 120 words.`,`Student: ${S.name}\nVotes: ${voteStr}\nReasoning: ${v}`);showAI('dilemma-fb',r);show('dilemma-nx');}
+async function subDecl(){const v=val('decl');if(v.length<15){alert('Please complete your declaration.');return;}S.resp.declare=v;loading('decl-fb');const r=await ai(`You are an Upward Bound coach delivering a final powerful closing message. The student just completed all 3 virtual workshops and wrote their summer declaration. Reflect their exact words back to them. Tell them it's been recorded and will be played at the Week 5 showcase. Make them feel the full weight of what they've committed to — in the best possible way. Warm, personal, powerful. Under 120 words.`,`Student: ${S.name}\nDeclaration: "This summer, I will ${v}"`);showAI('decl-fb',r);markDone(3);setTimeout(()=>{document.getElementById('content').innerHTML+=`<div class="complete"><div class="complete-title" style="font-size:26px">All 3 days complete, ${S.name}.</div><div class="complete-sub" style="font-size:15px;margin-top:8px">You showed up three times this week. Virtually. Before the summer even started.<br>That tells us everything we need to know about you.<br><br><strong>See you in person. Let's go.</strong></div></div>`;},500);}
+
+render();
+</script>
+</body>
+</html>
