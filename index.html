@@ -19,6 +19,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--gray-100);color:var(--tex
 .dtab.active{background:var(--purple);color:#fff;border-color:var(--purple)}
 .dtab.done{background:var(--success-light);color:var(--success);border-color:var(--success)}
 .dtab.done::after{content:' ✓'}
+.dtab.locked{opacity:0.45;cursor:not-allowed}
 .greeting{font-size:13px;color:var(--text-muted);font-weight:500}
 .pbar-wrap{background:var(--gray-200);border-radius:4px;height:5px;margin-bottom:20px;overflow:hidden}
 .pbar-fill{height:100%;background:var(--purple);border-radius:4px;transition:width .5s ease}
@@ -86,7 +87,7 @@ textarea:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba
 <div class="shell">
   <div class="topbar">
     <div class="logo">Upward Bound <span>Virtual Week 1</span></div>
-    <div class="day-tabs">
+    <div class="day-tabs" id="day-tabs">
       <button class="dtab active" onclick="switchDay(1)" id="tab1">Day 1</button>
       <button class="dtab" onclick="switchDay(2)" id="tab2">Day 2</button>
       <button class="dtab" onclick="switchDay(3)" id="tab3">Day 3</button>
@@ -98,6 +99,33 @@ textarea:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba
 </div>
 <script>
 const S={name:'',day:1,steps:{1:{cur:0,done:[]},2:{cur:0,done:[]},3:{cur:0,done:[]}},resp:{},votes:{}};
+
+const UNLOCK_DATES = {
+  1: new Date('2026-05-26T00:00:00'),
+  2: new Date('2026-05-27T00:00:00'),
+  3: new Date('2026-05-28T00:00:00'),
+};
+const DAY_NAMES = {
+  1: 'Monday, May 26',
+  2: 'Tuesday, May 27',
+  3: 'Wednesday, May 28',
+};
+
+function isDayUnlocked(day) {
+  const now = new Date();
+  return now >= UNLOCK_DATES[day];
+}
+
+function lockedHTML(day) {
+  return `<div class="card" style="text-align:center;padding:40px 24px">
+    <div style="font-size:36px;margin-bottom:16px">🔒</div>
+    <div style="font-size:18px;font-weight:600;color:var(--text);margin-bottom:8px">Day ${day} isn't available yet</div>
+    <div style="font-size:14px;color:var(--text-muted);line-height:1.65">This workshop unlocks on <strong>${DAY_NAMES[day]}</strong>.<br>Come back then to continue your journey.</div>
+    <div style="margin-top:20px;padding:12px 16px;background:var(--purple-light);border-radius:var(--radius);font-size:13px;color:var(--purple-dark)">
+      Complete your other work in the meantime — and we'll see you ${DAY_NAMES[day].split(',')[0]}!
+    </div>
+  </div>`;
+}
 const DAYS={1:['welcome','poem','events','pitch','preview'],2:['d2start','truths','act-eng','act-math','goals','vision'],3:['d3start','budget','alumni','dilemma','declare']};
 
 async function ai(system,user){
@@ -116,8 +144,24 @@ function val(id){const el=document.getElementById(id);return el?el.value.trim():
 function updateProgress(){const steps=DAYS[S.day];const pct=Math.round((S.steps[S.day].done.length/steps.length)*100);document.getElementById('pbar').style.width=pct+'%';}
 function advance(){const steps=DAYS[S.day];const s=S.steps[S.day];if(!s.done.includes(steps[s.cur]))s.done.push(steps[s.cur]);if(s.cur<steps.length-1)s.cur++;updateProgress();render();}
 function markDone(day){const steps=DAYS[day];const s=S.steps[day];const cur=steps[s.cur];if(!s.done.includes(cur))s.done.push(cur);updateProgress();const tab=document.getElementById('tab'+day);tab.className='dtab'+(S.day===day?' active':'')+(s.done.length===steps.length?' done':'');}
-function switchDay(d){S.day=d;[1,2,3].forEach(i=>{const all=DAYS[i].length,done=S.steps[i].done.length;document.getElementById('tab'+i).className='dtab'+(i===d?' active':'')+(done===all&&all>0?' done':'');});updateProgress();render();}
-function render(){if(S.day===1)rDay1();if(S.day===2)rDay2();if(S.day===3)rDay3();}
+function switchDay(d){
+  S.day=d;
+  [1,2,3].forEach(i=>{
+    const all=DAYS[i].length,done=S.steps[i].done.length;
+    const locked=!isDayUnlocked(i);
+    document.getElementById('tab'+i).className='dtab'+(i===d?' active':'')+(done===all&&all>0?' done':'')+(locked&&i!==d?' locked':'');
+  });
+  updateProgress();render();
+}
+function render(){
+  if(!isDayUnlocked(S.day)){
+    document.getElementById('content').innerHTML = lockedHTML(S.day);
+    return;
+  }
+  if(S.day===1)rDay1();
+  if(S.day===2)rDay2();
+  if(S.day===3)rDay3();
+}
 
 // ── DAY 1 ──────────────────────────────────────────────────────
 function rDay1(){const c=S.steps[1].cur;const fns=[d1_welcome,d1_poem,d1_events,d1_pitch,d1_preview];document.getElementById('content').innerHTML=fns[c]();}
@@ -409,8 +453,29 @@ async function subBudget(){const labels=['Rent','Groceries','Phone','Transport',
 function castVote(num,choice){S.votes[num]=choice;'ABCD'.split('').forEach(l=>{const el=document.getElementById(`v${num}${l}`);if(el)el.className='vbtn'+(l===choice?' voted':'');});}
 async function subAlumni(){const v=val('alumni');if(v.length<20){alert('Please write more.');return;}S.resp.alumni=v;loading('alumni-fb');const r=await ai(`You are an Upward Bound coach. The student reflected on alumni wisdom quotes about imposter syndrome, debt, and asking for help. Affirm what they wrote warmly. Connect their reflection to one concrete action they can take THIS summer. End with an encouraging line. Under 110 words.`,`Student: ${S.name}\nReflection:\n${v}`);showAI('alumni-fb',r);show('alumni-nx');}
 async function subDilemma(){const v=val('dilemma');if(v.length<20){alert('Please explain your reasoning first.');return;}S.resp.dilemma=v;const voteStr=Object.entries(S.votes).map(([d,c])=>`Dilemma ${d}: ${c}`).join(', ')||'(no votes recorded)';loading('dilemma-fb');const r=await ai(`You are a life skills coach for Upward Bound students. The student voted on 3 ethical dilemmas and explained their reasoning. Do NOT tell them they were right or wrong. Affirm their reasoning process. Introduce one of these frameworks naturally: short-term vs long-term thinking, who is affected by the decision, or the daylight test (would you be okay if everyone could see this). Ask one sharp follow-up question. Under 120 words.`,`Student: ${S.name}\nVotes: ${voteStr}\nReasoning: ${v}`);showAI('dilemma-fb',r);show('dilemma-nx');}
-async function subDecl(){const v=val('decl');if(v.length<15){alert('Please complete your declaration.');return;}S.resp.declare=v;loading('decl-fb');const r=await ai(`You are an Upward Bound coach delivering a final powerful closing message. The student just completed all 3 virtual workshops and wrote their summer declaration. Reflect their exact words back to them. Tell them it's been recorded and will be played at the Week 5 showcase. Make them feel the full weight of what they've committed to — in the best possible way. Warm, personal, powerful. Under 120 words.`,`Student: ${S.name}\nDeclaration: "This summer, I will ${v}"`);showAI('decl-fb',r);markDone(3);setTimeout(()=>{document.getElementById('content').innerHTML+=`<div class="complete"><div class="complete-title" style="font-size:26px">All 3 days complete, ${S.name}.</div><div class="complete-sub" style="font-size:15px;margin-top:8px">You showed up three times this week. Virtually. Before the summer even started.<br>That tells us everything we need to know about you.<br><br><strong>See you in person. Let's go.</strong></div></div>`;},500);}
+async function submitCompletion(){
+  try{
+    await fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      name:S.name,
+      declaration:S.resp.declare||'',
+      poem:S.resp.poem||'',
+      pitch:S.resp.pitch||'',
+      goals:S.resp.goals||'',
+      vision:S.resp.vision||'',
+      budget:S.resp.budget||'',
+      preview:S.resp.preview||'',
+      alumni:S.resp.alumni||'',
+    })});
+  }catch(e){console.log('Submission error:',e);}
+}
+async function subDecl(){const v=val('decl');if(v.length<15){alert('Please complete your declaration.');return;}S.resp.declare=v;loading('decl-fb');const r=await ai(`You are an Upward Bound coach delivering a final powerful closing message. The student just completed all 3 virtual workshops and wrote their summer declaration. Reflect their exact words back to them. Tell them it's been recorded and will be played at the Week 5 showcase. Make them feel the full weight of what they've committed to — in the best possible way. Warm, personal, powerful. Under 120 words.`,`Student: ${S.name}\nDeclaration: "This summer, I will ${v}"`);showAI('decl-fb',r);markDone(3);submitCompletion();setTimeout(()=>{document.getElementById('content').innerHTML+=`<div class="complete"><div class="complete-title" style="font-size:26px">All 3 days complete, ${S.name}.</div><div class="complete-sub" style="font-size:15px;margin-top:8px">You showed up three times this week. Virtually. Before the summer even started.<br>That tells us everything we need to know about you.<br><br><strong>See you in person. Let's go.</strong></div></div>`;},500);}
 
+// Init tab lock states on load
+[1,2,3].forEach(i=>{
+  if(!isDayUnlocked(i)){
+    document.getElementById('tab'+i).className += ' locked';
+  }
+});
 render();
 </script>
 </body>
