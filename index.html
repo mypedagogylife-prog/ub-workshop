@@ -120,7 +120,7 @@ const S={name:'',day:1,steps:{1:{cur:0,done:[]},2:{cur:0,done:[]},3:{cur:0,done:
 const DAYS={1:['welcome','poem','events','pitch','preview'],2:['d2start','truths','act-eng','act-math','goals','vision'],3:['d3start','budget','alumni','dilemma','declare']};
 
 // ── Unlock dates ───────────────────────────────────────────────
-const UNLOCK_DATES={1:new Date('2026-05-24T00:00:00'),2:new Date('2026-05-24T00:00:00'),3:new Date('2026-05-24T00:00:00')};
+const UNLOCK_DATES={1:new Date('2026-05-26T00:00:00'),2:new Date('2026-05-27T00:00:00'),3:new Date('2026-05-28T00:00:00')};
 const DAY_NAMES={1:'Monday, May 26',2:'Tuesday, May 27',3:'Wednesday, May 28'};
 function isDayUnlocked(d){return new Date()>=UNLOCK_DATES[d];}
 function lockedHTML(d){return `<div class="card" style="text-align:center;padding:40px 24px"><div style="font-size:36px;margin-bottom:16px">🔒</div><div style="font-size:18px;font-weight:600;color:var(--text);margin-bottom:8px">Day ${d} isn't available yet</div><div style="font-size:14px;color:var(--text-muted);line-height:1.65">This workshop unlocks on <strong>${DAY_NAMES[d]}</strong>.<br>Come back then to continue your journey.</div><div style="margin-top:20px;padding:12px 16px;background:var(--purple-light);border-radius:var(--radius);font-size:13px;color:var(--purple-dark)">Complete your other work in the meantime — and we'll see you ${DAY_NAMES[d].split(',')[0]}!</div></div>`;}
