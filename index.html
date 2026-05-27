@@ -120,10 +120,28 @@ const S={name:'',day:1,steps:{1:{cur:0,done:[]},2:{cur:0,done:[]},3:{cur:0,done:
 const DAYS={1:['welcome','poem','events','pitch','preview'],2:['d2start','truths','act-eng','act-math','goals','vision'],3:['d3start','budget','alumni','dilemma','declare']};
 
 // ── Unlock dates ───────────────────────────────────────────────
-const UNLOCK_DATES={1:new Date('2026-05-26T09:00:00'),2:new Date('2026-05-27T09:00:00'),3:new Date('2026-05-28T09:00:00')};
-const DAY_NAMES={1:'Monday, May 26',2:'Tuesday, May 27',3:'Wednesday, May 28'};
-function isDayUnlocked(d){return new Date()>=UNLOCK_DATES[d];}
-function lockedHTML(d){return `<div class="card" style="text-align:center;padding:40px 24px"><div style="font-size:36px;margin-bottom:16px">🔒</div><div style="font-size:18px;font-weight:600;color:var(--text);margin-bottom:8px">Day ${d} isn't available yet</div><div style="font-size:14px;color:var(--text-muted);line-height:1.65">This workshop unlocks on <strong>${DAY_NAMES[d]}</strong>.<br>Come back then to continue your journey.</div><div style="margin-top:20px;padding:12px 16px;background:var(--purple-light);border-radius:var(--radius);font-size:13px;color:var(--purple-dark)">Complete your other work in the meantime — and we'll see you ${DAY_NAMES[d].split(',')[0]}!</div></div>`;}
+const UNLOCK_DATES={1:new Date('2026-05-26T09:00:00-04:00'),2:new Date('2026-05-27T09:00:00-04:00'),3:new Date('2026-05-28T09:00:00-04:00')};
+const DAY_NAMES={1:'Monday, May 26 at 9 AM',2:'Tuesday, May 27 at 9 AM',3:'Wednesday, May 28 at 9 AM'};
+
+// Server time check — prevents students bypassing lock by changing device clock
+let serverNow = null;
+async function getServerTime(){
+  try{
+    const res = await fetch('/api/time');
+    const d = await res.json();
+    serverNow = d.now;
+  } catch {
+    serverNow = Date.now(); // fallback to device time if server unreachable
+  }
+}
+function isDayUnlocked(d){
+  const now = serverNow || Date.now();
+  return now >= UNLOCK_DATES[d].getTime();
+}
+function lockedHTML(d){
+  const unlockTime = DAY_NAMES[d];
+  return `<div class="card" style="text-align:center;padding:40px 24px"><div style="font-size:36px;margin-bottom:16px">🔒</div><div style="font-size:18px;font-weight:600;color:var(--text);margin-bottom:8px">Day ${d} isn't available yet</div><div style="font-size:14px;color:var(--text-muted);line-height:1.65">This workshop unlocks on <strong>${unlockTime}</strong>.<br>Come back then to continue your journey.</div><div style="margin-top:20px;padding:12px 16px;background:var(--purple-light);border-radius:var(--radius);font-size:13px;color:var(--purple-dark)">Complete your other work in the meantime — see you then!</div></div>`;
+}
 
 // ── Session timer ──────────────────────────────────────────────
 let sessionStart = Date.now();
@@ -610,8 +628,13 @@ async function submitCompletion(){
 async function subDecl(){const v=val('decl');if(v.length<15){alert('Please complete your declaration.');return;}S.resp.declare=v;loading('decl-fb');const r=await ai(`You are an Upward Bound coach delivering a final powerful closing message. The student completed all 3 virtual workshops and wrote their summer declaration. Reflect their exact words back. Tell them it's recorded and will be played at the Week 5 showcase. Make them feel the weight of this commitment. Warm, personal, powerful. Under 120 words.`,`Student: ${S.name}\nDeclaration: "This summer, I will ${v}"`);showAI('decl-fb',r,{followupContext:'the student just completed all 3 days and wrote their summer declaration'});markDone(3);submitCompletion();setTimeout(()=>{document.getElementById('content').innerHTML+=`<div class="complete"><div class="complete-title" style="font-size:26px">All 3 days complete, ${S.name}.</div><div class="complete-sub" style="font-size:15px;margin-top:8px">You showed up three times this week. Virtually. Before the summer even started.<br>That tells us everything we need to know about you.<br><br><strong>See you in person. Let's go.</strong></div></div>`;},500);}
 
 // ── Init ───────────────────────────────────────────────────────
-[1,2,3].forEach(i=>{if(!isDayUnlocked(i))document.getElementById('tab'+i).classList.add('locked');});
-render();
+// Fetch server time first, then render — prevents device clock bypass
+getServerTime().then(() => {
+  [1,2,3].forEach(i=>{
+    if(!isDayUnlocked(i))document.getElementById('tab'+i).classList.add('locked');
+  });
+  render();
+});
 </script>
 </body>
 </html>
